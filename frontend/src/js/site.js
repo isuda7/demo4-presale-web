@@ -35,18 +35,14 @@ function initHeader() {
   header.querySelectorAll('.gnb a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 
-  // 현재 섹션 하이라이트
-  const links = [...header.querySelectorAll('.gnb__link[href^="#"]')];
-  const targets = links.map((a) => document.querySelector(a.getAttribute('href'))).filter(Boolean);
-  if (targets.length && 'IntersectionObserver' in window) {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach((en) => {
-        if (!en.isIntersecting) return;
-        links.forEach((a) => a.classList.toggle('is-active', a.getAttribute('href') === `#${en.target.id}`));
-      });
-    }, { rootMargin: '-45% 0px -50% 0px' });
-    targets.forEach((t) => io.observe(t));
-  }
+  // 현재 메뉴 페이지 표시 (GNB · LNB 공통)
+  const page = document.body.dataset.page;
+  document.querySelectorAll('[data-menu]').forEach((a) => {
+    const on = a.dataset.menu === page;
+    a.classList.toggle('is-active', on);
+    if (on) a.setAttribute('aria-current', 'page');
+  });
+  document.querySelector('.lnb [aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 
 function initReveal() {

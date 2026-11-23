@@ -3,7 +3,7 @@
 카탈로그(`260604_백석시그니처자이_카탈로그_시안.pdf`)를 기반으로 만든 분양 홍보 사이트입니다.
 구성은 다음과 같습니다.
 
-- 메인(카탈로그 전 콘텐츠)
+- 메인 + 메뉴별 8개 페이지(카탈로그 전 콘텐츠)
 - 관심고객 등록
 - 관리자(신청 관리·마감 스위치)
 - 관리자 전용 인라인 편집
@@ -30,9 +30,18 @@
 │  ├─ src/server.js          # 로컬 개발 서버 (포트 8787)
 │  └─ scripts/               # migrate.js, seed.js
 ├─ frontend/
-│  ├─ index.html             # 메인 (카탈로그 p.1~22)
+│  ├─ index.html             # 메인 (히어로 + 메뉴 바로가기)
+│  ├─ premium.html           # 프리미엄 (p.2 랜드마크, p.18 브랜드)
+│  ├─ location.html          # 입지환경 (p.3)
+│  ├─ complex.html           # 단지설계 (p.4~5)
+│  ├─ community.html         # 커뮤니티 (p.6~8)
+│  ├─ system.html            # 시스템 (p.9~10)
+│  ├─ unit.html              # 세대안내 (p.11~16, ?type=84a 로 타입 지정)
+│  ├─ layout.html            # 배치도 (p.17~18)
+│  ├─ notice.html            # 사업개요·유의사항 (p.18~22)
 │  ├─ apply.html             # 관심고객 등록
 │  ├─ admin.html             # 관리자
+│  ├─ partials/              # 공통 head·header·lnb·cta·footer (<!-- @include x.html -->)
 │  ├─ public/images/         # 카탈로그에서 추출한 WebP 이미지
 │  └─ src/
 │     ├─ styles/             # tokens / base / components / site / apply / admin
@@ -84,7 +93,7 @@
    npm run dev
    ```
 
-   - 사이트: http://localhost:5173
+   - 사이트: http://localhost:5173 (메뉴: /premium.html, /location.html, /complex.html, /community.html, /system.html, /unit.html, /layout.html, /notice.html)
    - 신청: http://localhost:5173/apply.html
    - 관리자: http://localhost:5173/admin.html
 
@@ -135,6 +144,13 @@
 4. **Vercel 환경변수를 설정합니다.** Project → Settings → Environment Variables에 `ADMIN_PASSWORD`, `ADMIN_TOKEN_SECRET`, `TURSO_DATABASE_URL`, `TURSO_AUTH_TOKEN`을 넣고 재배포합니다.
 
 5. 첫 요청 때 테이블이 자동으로 생성됩니다. 이후에는 `main`에 푸시할 때마다 자동으로 빌드·배포됩니다.
+
+## 페이지 구성
+
+- 각 메뉴는 독립 HTML 페이지입니다. 상단 서브비주얼(메뉴명·브레드크럼)과 메뉴 간 이동용 고정 서브내비(LNB)를 공통으로 씁니다.
+- 헤더·푸터·LNB·CTA는 `frontend/partials/`에 한 번만 작성하고, Vite 플러그인(`frontend/vite.config.js`)이 빌드 때 `<!-- @include 파일명 -->` 위치에 끼워 넣습니다.
+- `frontend/`에 `*.html`을 추가하면 자동으로 빌드 대상에 포함됩니다. GNB·LNB에 노출하려면 `partials/header.html`과 `partials/lnb.html`에 `data-menu`가 페이지의 `body[data-page]`와 같은 링크를 추가합니다.
+- 헤더 버튼과 푸터 문구는 키가 고정되어 있어, 한 번 편집하면 모든 페이지에 반영됩니다.
 
 ## 기능 요약
 

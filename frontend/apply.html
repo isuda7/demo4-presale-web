@@ -5,37 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>관심고객 등록 | 백석시그니처자이</title>
   <meta name="description" content="백석시그니처자이 관심고객 등록 — 분양 일정과 혜택 정보를 가장 먼저 안내해 드립니다." />
-  <meta name="theme-color" content="#0b1f2c" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Asta+Sans:wght@300..800&family=Plus+Jakarta+Sans:wght@400..800&display=swap" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+  <!-- @include head.html -->
 </head>
 <body data-page="apply">
   <a class="skip-link" href="#main">본문 바로가기</a>
-  <header class="site-header site-header--solid" id="siteHeader">
-    <div class="container site-header__inner">
-      <a class="brand" href="/" aria-label="백석시그니처자이 홈">
-        <span class="brand__mark" aria-hidden="true"><i>Xi</i></span>
-        <span class="brand__divider" aria-hidden="true"></span>
-        <span class="brand__name">백석시그니처자이</span>
-      </a>
-      <button class="menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="gnb"><span></span></button>
-      <nav class="gnb" id="gnb" aria-label="주요 메뉴">
-        <ul class="gnb__list">
-          <li><a class="gnb__link" href="/#landmark">프리미엄</a></li>
-          <li><a class="gnb__link" href="/#location">입지환경</a></li>
-          <li><a class="gnb__link" href="/#architecture">단지설계</a></li>
-          <li><a class="gnb__link" href="/#community">커뮤니티</a></li>
-          <li><a class="gnb__link" href="/#smart">시스템</a></li>
-          <li><a class="gnb__link" href="/#unit">세대안내</a></li>
-          <li><a class="gnb__link" href="/#layout">배치도</a></li>
-          <li><a class="gnb__link" href="/#notice">유의사항</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <!-- @include header.html -->
 
   <main id="main" class="apply-page">
     <section class="apply-hero">
@@ -60,7 +34,7 @@
               <div><dt>타입</dt><dd data-edit>59㎡ · 63㎡ · 74㎡ · 84㎡A~E · 99㎡ · 115㎡P</dd></div>
               <div><dt>시공</dt><dd data-edit>GS건설</dd></div>
             </dl>
-            <a class="btn btn--outline btn--block" href="/#unit" data-edit="apply.aside.cta">타입별 평면 보기</a>
+            <a class="btn btn--outline btn--block" href="/unit.html" data-edit="apply.aside.cta">타입별 평면 보기</a>
           </div>
         </aside>
 
@@ -147,22 +121,7 @@
     </div>
   </template>
 
-  <footer class="site-footer">
-    <div class="container">
-      <div class="site-footer__top">
-        <a class="brand" href="/"><span class="brand__mark" aria-hidden="true"><i>Xi</i></span><span class="brand__divider" aria-hidden="true"></span><span class="brand__name">백석시그니처자이</span></a>
-        <dl class="site-footer__company">
-          <div><dt>시행</dt><dd>하나자산신탁</dd></div>
-          <div><dt>시공</dt><dd>GS건설</dd></div>
-          <div><dt>위탁</dt><dd>주식회사 중앙홀딩스</dd></div>
-        </dl>
-      </div>
-      <div class="site-footer__bottom">
-        <p>© 백석시그니처자이. All rights reserved.</p>
-        <a href="/admin.html" rel="nofollow">관리자</a>
-      </div>
-    </div>
-  </footer>
+  <!-- @include footer.html -->
 
   <script type="module" src="/src/js/apply.js"></script>
 </body>
