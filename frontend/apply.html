@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="ko" class="no-js">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>관심고객 등록 | 백석시그니처자이</title>
+  <meta name="description" content="백석시그니처자이 관심고객 등록 — 분양 일정과 혜택 정보를 가장 먼저 안내해 드립니다." />
+  <meta name="theme-color" content="#0b1f2c" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Asta+Sans:wght@300..800&family=Plus+Jakarta+Sans:wght@400..800&display=swap" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
+</head>
+<body data-page="apply">
+  <a class="skip-link" href="#main">본문 바로가기</a>
+  <header class="site-header site-header--solid" id="siteHeader">
+    <div class="container site-header__inner">
+      <a class="brand" href="/" aria-label="백석시그니처자이 홈">
+        <span class="brand__mark" aria-hidden="true"><i>Xi</i></span>
+        <span class="brand__divider" aria-hidden="true"></span>
+        <span class="brand__name">백석시그니처자이</span>
+      </a>
+      <button class="menu-toggle" type="button" aria-label="메뉴 열기" aria-expanded="false" aria-controls="gnb"><span></span></button>
+      <nav class="gnb" id="gnb" aria-label="주요 메뉴">
+        <ul class="gnb__list">
+          <li><a class="gnb__link" href="/#landmark">프리미엄</a></li>
+          <li><a class="gnb__link" href="/#location">입지환경</a></li>
+          <li><a class="gnb__link" href="/#architecture">단지설계</a></li>
+          <li><a class="gnb__link" href="/#community">커뮤니티</a></li>
+          <li><a class="gnb__link" href="/#smart">시스템</a></li>
+          <li><a class="gnb__link" href="/#unit">세대안내</a></li>
+          <li><a class="gnb__link" href="/#layout">배치도</a></li>
+          <li><a class="gnb__link" href="/#notice">유의사항</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" class="apply-page">
+    <section class="apply-hero">
+      <div class="apply-hero__pattern" aria-hidden="true"></div>
+      <div class="container apply-hero__inner">
+        <p class="kicker">Register</p>
+        <h1 class="apply-hero__title" data-edit="apply.title">관심고객 등록</h1>
+        <p class="apply-hero__desc" data-edit="apply.desc">백석시그니처자이의 분양 일정과 상담 정보를 가장 먼저 안내해 드립니다.</p>
+      </div>
+    </section>
+
+    <section class="section apply-body" id="apply">
+      <div class="container apply-grid">
+        <aside class="apply-aside">
+          <figure class="media apply-aside__img"><img data-edit="apply.image" src="/images/exterior.webp" alt="백석시그니처자이 단지 외관 투시도" /></figure>
+          <div class="apply-aside__card">
+            <p class="kicker">Overview</p>
+            <h2 data-edit="apply.aside.title">불당의 가치 · 백석의 완성</h2>
+            <dl class="apply-facts">
+              <div><dt>위치</dt><dd data-edit>충청남도 천안시 서북구 백석동 92-7번지(1BL), 94번지(2BL) 일원</dd></div>
+              <div><dt>규모</dt><dd data-edit>총 1,174세대 (1단지 854세대 · 2단지 320세대)</dd></div>
+              <div><dt>타입</dt><dd data-edit>59㎡ · 63㎡ · 74㎡ · 84㎡A~E · 99㎡ · 115㎡P</dd></div>
+              <div><dt>시공</dt><dd data-edit>GS건설</dd></div>
+            </dl>
+            <a class="btn btn--outline btn--block" href="/#unit" data-edit="apply.aside.cta">타입별 평면 보기</a>
+          </div>
+        </aside>
+
+        <div class="apply-main" id="applyMain" aria-live="polite">
+          <div class="apply-loading">신청 가능 여부를 확인하고 있습니다…</div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <template id="tplClosed">
+    <div class="closed-box">
+      <div class="closed-box__icon" aria-hidden="true"></div>
+      <p class="kicker">Closed</p>
+      <h2 class="closed-box__title"></h2>
+      <p class="closed-box__msg"></p>
+      <a class="btn btn--outline" href="/">메인으로 돌아가기</a>
+    </div>
+  </template>
+
+  <template id="tplForm">
+    <form class="apply-form" id="applyForm" novalidate>
+      <div class="apply-form__head">
+        <h2>등록 정보 입력</h2>
+        <p><span class="req">*</span> 표시는 필수 입력 항목입니다.</p>
+      </div>
+      <div class="form-grid">
+        <div class="field">
+          <label class="field__label" for="f-name">이름 <span class="req">*</span></label>
+          <input class="input" id="f-name" name="name" autocomplete="name" maxlength="20" required aria-describedby="e-name" />
+          <p class="field__error" id="e-name"></p>
+        </div>
+        <div class="field">
+          <label class="field__label" for="f-phone">휴대폰 번호 <span class="req">*</span></label>
+          <input class="input" id="f-phone" name="phone" type="tel" inputmode="numeric" autocomplete="tel" maxlength="13" placeholder="010-0000-0000" required aria-describedby="e-phone" />
+          <p class="field__error" id="e-phone"></p>
+        </div>
+        <fieldset class="field field--full">
+          <legend class="field__label">관심 타입 <span class="req">*</span></legend>
+          <div class="chip-group" id="typeChips"></div>
+          <p class="field__error" id="e-unitType"></p>
+        </fieldset>
+        <div class="field">
+          <label class="field__label" for="f-visit">방문 희망일 <small class="field__hint">(선택)</small></label>
+          <input class="input" id="f-visit" name="visitDate" type="date" aria-describedby="e-visitDate" />
+          <p class="field__error" id="e-visitDate"></p>
+        </div>
+        <div class="field field--full">
+          <label class="field__label" for="f-msg">문의 내용 <small class="field__hint">(선택, 500자 이내)</small></label>
+          <textarea class="textarea" id="f-msg" name="message" maxlength="500" aria-describedby="e-message"></textarea>
+          <p class="field__error" id="e-message"></p>
+        </div>
+        <div class="hp" aria-hidden="true"><label>웹사이트<input name="website" tabindex="-1" autocomplete="off" /></label></div>
+      </div>
+
+      <div class="consent">
+        <div class="consent__box">
+          <h3>개인정보 수집·이용 동의 <span class="req">(필수)</span></h3>
+          <dl>
+            <div><dt>수집 항목</dt><dd data-edit="apply.privacy.items">이름, 휴대폰 번호, 관심 타입, 방문 희망일, 문의 내용</dd></div>
+            <div><dt>이용 목적</dt><dd data-edit="apply.privacy.purpose">분양 정보 안내, 견본주택 방문 및 상담 예약</dd></div>
+            <div><dt>보유 기간</dt><dd data-edit="apply.privacy.period">분양 완료 후 1년 또는 동의 철회 시까지</dd></div>
+          </dl>
+          <p class="consent__note" data-edit="apply.privacy.note">동의를 거부할 수 있으나, 거부 시 관심고객 등록이 제한됩니다.</p>
+        </div>
+        <label class="check"><input type="checkbox" name="agreePrivacy" aria-describedby="e-agreePrivacy" /> 개인정보 수집·이용에 동의합니다. (필수)</label>
+        <p class="field__error" id="e-agreePrivacy"></p>
+        <label class="check"><input type="checkbox" name="agreeMarketing" /> 분양 소식 및 이벤트 안내 수신에 동의합니다. (선택)</label>
+      </div>
+
+      <button class="btn btn--lg btn--block" type="submit">관심고객 등록하기 <span class="btn__arrow" aria-hidden="true"></span></button>
+      <p class="form-alert" role="alert" hidden></p>
+    </form>
+  </template>
+
+  <template id="tplDone">
+    <div class="closed-box done-box">
+      <div class="done-box__check" aria-hidden="true"></div>
+      <p class="kicker">Thank you</p>
+      <h2 class="closed-box__title">관심고객 등록이 완료되었습니다</h2>
+      <p class="closed-box__msg">입력하신 연락처로 분양 일정과 상담 정보를 안내해 드리겠습니다.
+백석시그니처자이에 보내주신 관심에 감사드립니다.</p>
+      <a class="btn" href="/">메인으로 돌아가기</a>
+    </div>
+  </template>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="site-footer__top">
+        <a class="brand" href="/"><span class="brand__mark" aria-hidden="true"><i>Xi</i></span><span class="brand__divider" aria-hidden="true"></span><span class="brand__name">백석시그니처자이</span></a>
+        <dl class="site-footer__company">
+          <div><dt>시행</dt><dd>하나자산신탁</dd></div>
+          <div><dt>시공</dt><dd>GS건설</dd></div>
+          <div><dt>위탁</dt><dd>주식회사 중앙홀딩스</dd></div>
+        </dl>
+      </div>
+      <div class="site-footer__bottom">
+        <p>© 백석시그니처자이. All rights reserved.</p>
+        <a href="/admin.html" rel="nofollow">관리자</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module" src="/src/js/apply.js"></script>
+</body>
+</html>

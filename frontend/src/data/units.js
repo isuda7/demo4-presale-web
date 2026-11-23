@@ -1,0 +1,26 @@
+// 카탈로그 UNIT PLAN (p.12~16) 기준 타입 데이터
+export const UNITS = [
+  { id: '59', label: '59', suffix: '', color: '#f2c98b', page: 12,
+    blocks: [{ danji: '1단지', households: 50, exclusive: '59.9914', supply: '78.9423', contract: '120.4185' }] },
+  { id: '63', label: '63', suffix: '', color: '#e8904f', page: 12,
+    blocks: [{ danji: '1단지', households: 27, exclusive: '63.9705', supply: '84.3515', contract: '128.5789' }] },
+  { id: '74', label: '74', suffix: '', color: '#a8692f', page: 13,
+    blocks: [{ danji: '1단지', households: 196, exclusive: '74.9682', supply: '97.9727', contract: '149.8035' }] },
+  { id: '84a', label: '84', suffix: 'A', color: '#cadf7c', page: 13,
+    blocks: [
+      { danji: '1단지', households: 211, exclusive: '84.9915', supply: '110.2730', contract: '169.0337' },
+      { danji: '2단지', households: 249, exclusive: '84.9915', supply: '111.7476', contract: '172.7361' },
+    ] },
+  { id: '84b', label: '84', suffix: 'B', color: '#a5d3ee', page: 14,
+    blocks: [{ danji: '1단지', households: 182, exclusive: '84.9668', supply: '111.0677', contract: '169.8113' }] },
+  { id: '84c', label: '84', suffix: 'C', color: '#4ea6de', page: 14,
+    blocks: [{ danji: '1단지', households: 106, exclusive: '84.9918', supply: '110.1923', contract: '168.9532' }] },
+  { id: '84d', label: '84', suffix: 'D', color: '#8c6fc1', page: 15,
+    blocks: [{ danji: '2단지', households: 56, exclusive: '84.9951', supply: '112.3794', contract: '173.3705' }] },
+  { id: '84e', label: '84', suffix: 'E', color: '#b44fa9', page: 15,
+    blocks: [{ danji: '2단지', households: 15, exclusive: '84.9981', supply: '113.8388', contract: '174.8321' }] },
+  { id: '99', label: '99', suffix: '', color: '#5fc9b2', page: 16,
+    blocks: [{ danji: '1단지', households: 78, exclusive: '99.3915', supply: '129.2619', contract: '197.9784' }] },
+  { id: '115p', label: '115', suffix: 'P', color: '#f4d5e6', page: 16,
+    blocks: [{ danji: '1단지', households: 4, exclusive: '115.9599', supply: '151.9408', contract: '232.1123' }] },
+];

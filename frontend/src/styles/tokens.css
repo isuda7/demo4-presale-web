@@ -1,0 +1,120 @@
+/* ==========================================================
+   백석시그니처자이 Design Tokens
+   카탈로그 기준: 미드나잇 네이비 + 웜 그레이지(스톤) + 화이트
+   서체: Asta Sans(국문 본문/헤드라인), Plus Jakarta Sans(영문 라벨)
+   ========================================================== */
+:root {
+  /* Brand — Navy (표지·헤더바·섹션 포인트) */
+  --navy-950: #071822;
+  --navy-900: #0b1f2c;
+  --navy-800: #0f2a3b;
+  --navy-700: #15364b;
+  --navy-600: #1d4660;
+  --navy-500: #2b5a78;
+
+  /* Neutral — Stone/Greige (카탈로그 배경 면) */
+  --stone-50: #f8f6f2;
+  --stone-100: #f2eee8;
+  --stone-200: #e8e2d9;
+  --stone-300: #d9d0c3;
+  --stone-400: #b9ad9c;
+  --stone-500: #8f8473;
+
+  /* Ink */
+  --ink-900: #1b1d1f;
+  --ink-700: #3b3f44;
+  --ink-500: #6a6f75;
+  --ink-400: #8d9197;
+  --ink-300: #b6b9bd;
+  --line: #d8d4ce;
+  --line-strong: #1b1d1f;
+  --white: #ffffff;
+
+  /* Accent — 평면 옵션 표기 컬러(카탈로그 유상옵션 범례) */
+  --accent-copper: #c8743a;
+  --accent-rose: #c0558f;
+  --accent-teal: #3aa6a0;
+
+  /* Semantic */
+  --color-bg: var(--white);
+  --color-bg-alt: var(--stone-100);
+  --color-bg-dark: var(--navy-900);
+  --color-text: var(--ink-900);
+  --color-text-sub: var(--ink-500);
+  --color-text-inverse: #f4f1ec;
+  --color-primary: var(--navy-800);
+  --color-primary-hover: var(--navy-600);
+  --color-focus: #4b8fc2;
+  --color-success: #2f7d5b;
+  --color-danger: #b2423a;
+  --color-warning: #b9822b;
+
+  /* Typography */
+  --font-ko: 'Asta Sans', 'Pretendard Variable', Pretendard, -apple-system, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
+  --font-en: 'Plus Jakarta Sans', 'Asta Sans', sans-serif;
+
+  --fs-display: clamp(2.5rem, 1.6rem + 3.6vw, 4.75rem);
+  --fs-h1: clamp(2rem, 1.4rem + 2.2vw, 3.25rem);
+  --fs-h2: clamp(1.625rem, 1.25rem + 1.4vw, 2.5rem);
+  --fs-h3: clamp(1.25rem, 1.1rem + 0.6vw, 1.625rem);
+  --fs-h4: 1.125rem;
+  --fs-body-lg: 1.0625rem;
+  --fs-body: 1rem;
+  --fs-sm: 0.875rem;
+  --fs-xs: 0.75rem;
+  --fs-note: 0.6875rem;
+
+  --fw-light: 300;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  --lh-tight: 1.3;
+  --lh-normal: 1.6;
+  --lh-loose: 1.8;
+  --ls-label: 0.18em;
+  --ls-tight: -0.02em;
+
+  /* Spacing (8px grid) */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 32px;
+  --sp-7: 48px;
+  --sp-8: 64px;
+  --sp-9: 96px;
+  --sp-10: 128px;
+  --section-y: clamp(80px, 6vw + 40px, 160px);
+  --gutter: clamp(16px, 4vw, 40px);
+
+  /* Layout */
+  --container: 1280px;
+  --container-narrow: 960px;
+  --header-h: 76px;
+
+  /* Shape */
+  --radius-none: 0;
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-pill: 999px;
+  --radius-arch: 999px 999px 0 0; /* 표지의 아치 모티프 */
+
+  /* Elevation */
+  --shadow-sm: 0 1px 2px rgba(11, 31, 44, 0.08);
+  --shadow-md: 0 8px 24px rgba(11, 31, 44, 0.12);
+  --shadow-lg: 0 24px 60px rgba(11, 31, 44, 0.22);
+
+  /* Motion */
+  --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --dur-fast: 160ms;
+  --dur: 320ms;
+  --dur-slow: 800ms;
+
+  /* Pattern — 표지 세로 체크 스트라이프 */
+  --pattern-stripe: repeating-linear-gradient(90deg,
+      rgba(255, 255, 255, 0.035) 0 7.2%,
+      rgba(0, 0, 0, 0.12) 7.2% 14.4%);
+}
