@@ -42,9 +42,9 @@ function closePop() {
   if (state) state.pop = null;
 }
 
-function placePop(pop, el) {
+function placePop(pop, el, evt) {
   document.body.append(pop);
-  const r = el.getBoundingClientRect();
+  const r = evt ? { left: evt.clientX, top: evt.clientY, bottom: evt.clientY } : el.getBoundingClientRect();
   const w = pop.offsetWidth;
   let left = window.scrollX + r.left;
   left = Math.max(window.scrollX + 12, Math.min(left, window.scrollX + document.documentElement.clientWidth - w - 12));
@@ -106,7 +106,7 @@ function resizeImage(file, maxW = 1920, quality = 0.84) {
   });
 }
 
-function openImagePop(el) {
+function openImagePop(el, evt) {
   closePop();
   const key = el.dataset.editKey;
   const pop = $(`
@@ -144,7 +144,7 @@ function openImagePop(el) {
   });
   bindPopCommon(pop, el);
   state.pop = pop;
-  placePop(pop, el);
+  placePop(pop, el, evt);
 }
 
 function bindPopCommon(pop, el) {
@@ -190,6 +190,10 @@ function onClickCapture(e) {
     closePop();
     return;
   }
+  // 오버레이 아래 깔린 배경 비주얼(히어로 등): 빈 영역 클릭 시 배경 이미지 편집
+  const bgHost = e.target.closest('[data-edit-bg]');
+  const bgImg = bgHost?.querySelector('img[data-edit-key]');
+  if (bgImg && !link) { e.preventDefault(); e.stopPropagation(); openImagePop(bgImg, e); return; }
   if (link && (link.tagName === 'A' || link.hasAttribute('data-lightbox'))) e.preventDefault();
   if (!e.target.closest('.xe-pop')) closePop();
 }

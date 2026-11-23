@@ -50,3 +50,4 @@ fieldset.field legend { padding: 0; margin-bottom: 8px; }
   .apply-aside { position: static; order: 2; }
 }
 @media (max-width: 600px) { .form-grid { grid-template-columns: 1fr; } }
+.apply-grid > *, .form-grid > * { min-width: 0; }

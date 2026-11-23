@@ -43,6 +43,7 @@ export function buttonText(el) {
 
 const ALLOWED = new Set(['B', 'STRONG', 'EM', 'I', 'SMALL', 'BR', 'SUP', 'SUB', 'SPAN']);
 const BLOCK = new Set(['DIV', 'P', 'LI']);
+const DROP = new Set(['SCRIPT', 'STYLE', 'TEMPLATE', 'IFRAME', 'OBJECT', 'NOSCRIPT', 'TEXTAREA', 'SELECT']);
 
 /** 허용 태그만 남기고 모든 속성을 제거한다 (XSS 방지 — 렌더 시점에 항상 적용). */
 export function sanitizeHtml(html) {
@@ -51,7 +52,7 @@ export function sanitizeHtml(html) {
   const walk = (node) => {
     [...node.childNodes].forEach((child) => {
       if (child.nodeType === Node.TEXT_NODE) return;
-      if (child.nodeType !== Node.ELEMENT_NODE) { child.remove(); return; }
+      if (child.nodeType !== Node.ELEMENT_NODE || DROP.has(child.tagName)) { child.remove(); return; }
       walk(child);
       if (ALLOWED.has(child.tagName)) {
         [...child.attributes].forEach((a) => child.removeAttribute(a.name));

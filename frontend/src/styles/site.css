@@ -229,3 +229,8 @@
 .cta-band__inner { position: relative; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 28px; }
 .cta-band .kicker { color: rgba(255,255,255,.55); }
 .cta-band h2 { margin-top: 10px; font-size: var(--fs-h3); font-weight: 500; line-height: 1.45; }
+
+/* 그리드 자식이 내부 표/이미지 최소폭 때문에 넘치지 않도록 */
+.location__grid > *, .arch__top > *, .arch__points > *, .cx-block > *, .cloud__grid > *, .smart__intro > *,
+.sys-grid > *, .sys-two > *, .unit-intro__grid > *, .unit-panel__body > *, .layout__grid > *, .layout__col > *,
+.layout__summary > *, .overview > *, .checker-pair > * { min-width: 0; }

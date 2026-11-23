@@ -33,7 +33,7 @@
 
 @media (max-width: 1080px) {
   .menu-toggle { display: block; }
-  .header-cta { display: none; }
+  .site-header .header-cta { display: none; }
   .gnb {
     position: fixed; inset: var(--header-h) 0 0; background: var(--navy-900); padding: var(--sp-6) var(--gutter);
     transform: translateX(100%); transition: transform var(--dur) var(--ease); overflow-y: auto;
