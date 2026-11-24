@@ -1,0 +1,6 @@
+/* 사이트 공통 스타일 진입점 — HTML <head>에서 <link>로 불러 첫 페인트 전에 적용된다. */
+@import 'aos/dist/aos.css';
+@import './tokens.css';
+@import './base.css';
+@import './components.css';
+@import './site.css';

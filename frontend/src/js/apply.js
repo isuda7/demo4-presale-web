@@ -1,8 +1,3 @@
-import '../styles/tokens.css';
-import '../styles/base.css';
-import '../styles/components.css';
-import '../styles/site.css';
-import '../styles/apply.css';
 import { initSite } from './site.js';
 
 const main = document.getElementById('applyMain');

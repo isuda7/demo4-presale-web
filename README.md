@@ -44,7 +44,7 @@
 │  ├─ partials/              # 공통 head·header·cta·footer·aos-setup (<!-- @include x.html -->)
 │  ├─ public/images/         # 카탈로그에서 추출한 WebP 이미지
 │  └─ src/
-│     ├─ styles/             # tokens / base / components / site / apply / admin
+│     ├─ styles/             # main.css·admin-entry.css(진입점) → tokens / base / components / site / apply / admin
 │     ├─ js/                 # main, apply, admin, site(공통), content(편집값 반영)
 │     ├─ js/editor/          # 인라인 편집기 (관리자 확인 후에만 동적 로드)
 │     └─ data/               # notes.json(※ 유의사항 원문), units.js(타입 데이터)
@@ -151,6 +151,14 @@
 - 헤더·푸터·CTA는 `frontend/partials/`에 한 번만 작성하고, Vite 플러그인(`frontend/vite.config.js`)이 빌드 때 `<!-- @include 파일명 -->` 위치에 끼워 넣습니다.
 - `frontend/`에 `*.html`을 추가하면 자동으로 빌드 대상에 포함됩니다. GNB에 노출하려면 `partials/header.html`에 `data-menu`가 페이지의 `body[data-page]`와 같은 링크를 추가합니다.
 - 헤더 버튼과 푸터 문구는 키가 고정되어 있어, 한 번 편집하면 모든 페이지에 반영됩니다.
+
+## 스타일 로딩
+
+- CSS는 JS에서 import하지 않고 HTML `<head>`의 `<link rel="stylesheet">`로 불러옵니다. 개발 서버와 빌드 모두 첫 화면이 그려지기 전에 스타일이 적용되어, 스타일 없는 화면이 잠깐 보이는 현상(FOUC)이 없습니다.
+  - 사이트 공통: `src/styles/main.css` (`partials/head.html`에서 연결)
+  - 신청 화면 추가분: `src/styles/apply.css`, 관리자: `src/styles/admin-entry.css`
+  - 예외: 인라인 편집기 CSS는 관리자에게만 필요하므로 편집기 JS와 함께 지연 로드합니다.
+- 웹폰트는 Google Fonts의 Asta Sans·Plus Jakarta Sans만 사용합니다(`display=swap`). 대체 서체 Pretendard CDN은 첫 화면을 늦춰 제거했고, 대체는 시스템 서체(Apple SD Gothic Neo, Noto Sans KR)가 맡습니다.
 
 ## 스크롤 등장 효과 (AOS)
 

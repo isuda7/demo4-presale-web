@@ -1,7 +1,3 @@
-import '../styles/tokens.css';
-import '../styles/base.css';
-import '../styles/components.css';
-import '../styles/admin.css';
 import { toast } from './site.js';
 
 const UNIT_TYPES = ['59', '63', '74', '84A', '84B', '84C', '84D', '84E', '99', '115P'];

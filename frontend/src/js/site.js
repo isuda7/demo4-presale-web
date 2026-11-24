@@ -1,5 +1,4 @@
 import AOS from 'aos';
-import 'aos/dist/aos.css';
 import { assignKeys, loadContent } from './content.js';
 
 export function toast(message, kind = 'info', ms = 2600) {

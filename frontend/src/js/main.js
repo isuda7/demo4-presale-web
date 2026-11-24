@@ -1,7 +1,3 @@
-import '../styles/tokens.css';
-import '../styles/base.css';
-import '../styles/components.css';
-import '../styles/site.css';
 import notes from '../data/notes.json';
 import { UNITS } from '../data/units.js';
 import { initSite } from './site.js';

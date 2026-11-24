@@ -36,7 +36,7 @@
 
 ### 타이포그래피
 
-- 국문: **Asta Sans** (카탈로그 사용 서체), 대체 서체 Pretendard
+- 국문: **Asta Sans** (카탈로그 사용 서체), 대체는 시스템 서체(Apple SD Gothic Neo, Noto Sans KR)
 - 영문 라벨: **Plus Jakarta Sans** (카탈로그 사용 서체)
 
 | 토큰 | 크기 | 용도 |

@@ -1,0 +1,5 @@
+/* 관리자 페이지 스타일 진입점 */
+@import './tokens.css';
+@import './base.css';
+@import './components.css';
+@import './admin.css';
