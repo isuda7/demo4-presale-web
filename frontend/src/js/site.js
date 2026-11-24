@@ -1,3 +1,5 @@
+import AOS from 'aos';
+import 'aos/dist/aos.css';
 import { assignKeys, loadContent } from './content.js';
 
 export function toast(message, kind = 'info', ms = 2600) {
@@ -35,23 +37,29 @@ function initHeader() {
   header.querySelectorAll('.gnb a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape') setOpen(false); });
 
-  // 현재 메뉴 페이지 표시 (GNB · LNB 공통)
+  // 현재 메뉴 페이지 표시 (헤더 GNB)
   const page = document.body.dataset.page;
   document.querySelectorAll('[data-menu]').forEach((a) => {
     const on = a.dataset.menu === page;
     a.classList.toggle('is-active', on);
     if (on) a.setAttribute('aria-current', 'page');
   });
-  document.querySelector('.lnb [aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'center' });
 }
 
-function initReveal() {
-  const els = document.querySelectorAll('.reveal');
-  if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('is-in')); return; }
-  const io = new IntersectionObserver((entries) => {
-    entries.forEach((en) => { if (en.isIntersecting) { en.target.classList.add('is-in'); io.unobserve(en.target); } });
-  }, { rootMargin: '0px 0px -8% 0px' });
-  els.forEach((e) => io.observe(e));
+/** AOS 초기화 — 대상·값은 partials/aos-setup.html(window.XI_AOS)에서 부여된다. */
+function initAos() {
+  const c = window.XI_AOS;
+  if (!c || !document.documentElement.classList.contains('aos-on')) return;
+  AOS.init({ offset: c.offset, duration: c.duration, easing: c.easing, once: c.once });
+  // 등장이 끝나면 AOS 속성을 걷어내 버튼·카드의 기존 hover 전환이 덮이지 않게 한다.
+  document.addEventListener('transitionend', (e) => {
+    const el = e.target;
+    if (e.propertyName !== 'opacity' || !el.classList?.contains('aos-animate')) return;
+    ['data-aos', 'data-aos-delay'].forEach((a) => el.removeAttribute(a));
+  });
+  // 탭 전환·동적 렌더링 등으로 높이가 바뀌면 위치 재계산
+  window.addEventListener('load', () => AOS.refresh());
+  document.addEventListener('click', (e) => { if (e.target.closest('[role=tab], details > summary')) requestAnimationFrame(() => AOS.refresh()); });
 }
 
 function initLightbox() {
@@ -100,7 +108,7 @@ export async function maybeLoadEditor() {
 export async function initSite() {
   document.documentElement.classList.remove('no-js');
   initHeader();
-  initReveal();
+  initAos();
   initLightbox();
   assignKeys();
   await loadContent();

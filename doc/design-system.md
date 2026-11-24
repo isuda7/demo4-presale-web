@@ -55,7 +55,7 @@
 - 섹션 상하 여백: `--section-y` (80 → 160px)
 - 거터: `--gutter` (16 → 40px). 컨테이너 최대폭은 1280px
 - 모서리: 기본 0(카탈로그의 직각 그리드), 배지만 pill, 장식은 arch
-- 모션: `--ease` cubic-bezier(.22,.61,.36,1). 스크롤 등장(`.reveal`)은 800ms이며, `prefers-reduced-motion`이면 끕니다
+- 모션: `--ease` cubic-bezier(.22,.61,.36,1). 스크롤 등장은 AOS로 처리하며 값의 단일 출처는 `frontend/partials/aos-setup.html`입니다(아래 5장).
 
 ## 3. 컴포넌트
 
@@ -82,3 +82,17 @@
 - 본문 바로가기 링크, 키보드 포커스 링(`:focus-visible`), 탭과 라이트박스의 키보드 조작을 지원합니다.
 - 모든 이미지에 의미 있는 대체텍스트를 넣었습니다. 장식 이미지는 `alt=""`입니다.
 - 폼 오류는 `aria-describedby`와 `aria-invalid`로 연결하고, 결과는 `aria-live`로 알립니다.
+
+## 5. 스크롤 등장 효과 (AOS) 원칙
+
+| 구분 | 적용 지점 | 값 |
+|---|---|---|
+| 첫 화면 | `.hero`, `.subvisual`, `.apply-hero` 내부 요소 (`.xi-intro`) | 로드 시 16px 상승, 800ms, 두 번째 요소부터 150ms 지연 |
+| 섹션 비주얼·텍스트 | `figure`, `.media`, `.sys-card`, `.checker`, `.sec-head`, 목록·표 블록 등 | `fade-up` 24px, 700ms, ease-out-cubic, offset 80px, once, 두 번째 요소부터 100ms |
+| 전폭 배경형 비주얼 | `.exterior__visual`, `.landmark__visual` | `fade` (이동 없음) |
+| 카드 묶음 | `.menu-cards`, `.photo-strip`, `.gallery`, `.arch__gardens`, `.sys-grid`, `.overview` | 자식을 왼쪽부터 100ms 간격, 지연은 3번째까지 |
+
+- 값과 대상 선택자는 `frontend/partials/aos-setup.html`(window.XI_AOS) 한 곳에서만 바꿉니다. 페이지 코드에 `data-aos`를 직접 달지 않습니다.
+- 바깥 요소가 이미 대상이면 안쪽 요소에는 효과를 붙이지 않아 중복 애니메이션을 막습니다.
+- 제외: `data-aos-off`. 동작 줄이기 환경과 관리자 편집 모드에서는 끕니다.
+- 효과 대상 요소의 기본 위치를 `transform`으로 잡지 않습니다(좌표·margin으로 배치).

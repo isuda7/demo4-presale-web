@@ -243,15 +243,5 @@
 .breadcrumb a:hover { color: #fff; }
 .breadcrumb [aria-current] { color: #fff; }
 
-/* ---------- LNB (메뉴 간 이동 서브내비) ---------- */
-.lnb { position: sticky; top: var(--header-h); z-index: 60; background: #fff; border-bottom: 1px solid var(--line); }
-.lnb__list { display: flex; overflow-x: auto; scrollbar-width: none; }
-.lnb__list::-webkit-scrollbar { display: none; }
-.lnb__list li { flex: 1 0 auto; }
-.lnb__list a { position: relative; display: block; padding: 18px 16px; text-align: center; font-size: 15px; font-weight: 500; color: var(--ink-500); white-space: nowrap; transition: color var(--dur-fast); }
-.lnb__list a:hover { color: var(--navy-800); }
-.lnb__list a[aria-current='page'] { color: var(--navy-900); font-weight: 700; }
-.lnb__list a[aria-current='page']::after { content: ''; position: absolute; left: 16px; right: 16px; bottom: -1px; height: 3px; background: var(--navy-900); }
-body.has-xe-bar .lnb { top: calc(var(--header-h) + 52px); }
 
 body[data-page='apply'] .float-cta { display: none; }

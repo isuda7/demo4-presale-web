@@ -41,7 +41,7 @@
 │  ├─ notice.html            # 사업개요·유의사항 (p.18~22)
 │  ├─ apply.html             # 관심고객 등록
 │  ├─ admin.html             # 관리자
-│  ├─ partials/              # 공통 head·header·lnb·cta·footer (<!-- @include x.html -->)
+│  ├─ partials/              # 공통 head·header·cta·footer·aos-setup (<!-- @include x.html -->)
 │  ├─ public/images/         # 카탈로그에서 추출한 WebP 이미지
 │  └─ src/
 │     ├─ styles/             # tokens / base / components / site / apply / admin
@@ -147,10 +147,19 @@
 
 ## 페이지 구성
 
-- 각 메뉴는 독립 HTML 페이지입니다. 상단 서브비주얼(메뉴명·브레드크럼)과 메뉴 간 이동용 고정 서브내비(LNB)를 공통으로 씁니다.
-- 헤더·푸터·LNB·CTA는 `frontend/partials/`에 한 번만 작성하고, Vite 플러그인(`frontend/vite.config.js`)이 빌드 때 `<!-- @include 파일명 -->` 위치에 끼워 넣습니다.
-- `frontend/`에 `*.html`을 추가하면 자동으로 빌드 대상에 포함됩니다. GNB·LNB에 노출하려면 `partials/header.html`과 `partials/lnb.html`에 `data-menu`가 페이지의 `body[data-page]`와 같은 링크를 추가합니다.
+- 각 메뉴는 독립 HTML 페이지입니다. 상단에 서브비주얼(메뉴명·브레드크럼)이 있고, 메뉴 간 이동은 헤더 GNB 하나로만 합니다(현재 메뉴 강조 표시).
+- 헤더·푸터·CTA는 `frontend/partials/`에 한 번만 작성하고, Vite 플러그인(`frontend/vite.config.js`)이 빌드 때 `<!-- @include 파일명 -->` 위치에 끼워 넣습니다.
+- `frontend/`에 `*.html`을 추가하면 자동으로 빌드 대상에 포함됩니다. GNB에 노출하려면 `partials/header.html`에 `data-menu`가 페이지의 `body[data-page]`와 같은 링크를 추가합니다.
 - 헤더 버튼과 푸터 문구는 키가 고정되어 있어, 한 번 편집하면 모든 페이지에 반영됩니다.
+
+## 스크롤 등장 효과 (AOS)
+
+- 사이트 전체 공통으로 적용됩니다. 설정 값과 대상은 `frontend/partials/aos-setup.html` 한 곳에서만 관리하고, 이 파일은 푸터에 포함되어 모든 페이지에 자동 적용됩니다. 새 페이지도 별도 작업이 필요 없습니다.
+- 첫 화면(히어로·서브비주얼)은 스크롤 대신 로드할 때 나타납니다(16px, 800ms, 두 번째 요소부터 150ms 지연).
+- 섹션 안 비주얼(이미지·도면·카드)과 텍스트 블록은 아래에서 위로 올라오며 한 번만 나타납니다(24px, 700ms, ease-out, 하단 80px 진입 시 시작, 두 번째 요소부터 100ms 지연). 전폭 배경형 비주얼은 이동 없이 페이드만 합니다.
+- 카드 묶음(메뉴 카드, 사진 스트립, 갤러리 등)은 왼쪽부터 100ms 간격으로 나타나며, 지연은 3번째 카드까지만 붙습니다.
+- 제외하려면 섹션이나 요소에 `data-aos-off`를 답니다. 동작 줄이기(`prefers-reduced-motion`) 환경과 관리자 편집 모드에서는 효과를 끕니다.
+- 등장이 끝난 요소는 AOS 속성을 걷어내 버튼·카드의 기존 hover 전환을 유지합니다.
 
 ## 기능 요약
 
