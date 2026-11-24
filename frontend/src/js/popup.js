@@ -56,7 +56,7 @@ function footerHtml() {
 
 function buildIndividual(items) {
   return items.map((p) => `
-    <section class="popup popup--${esc(p.type)}" data-ids="${p.id}" role="dialog" aria-labelledby="popup-title-${p.id}" tabindex="-1">
+    <section class="popup popup--${esc(p.type)}" data-ids="${p.id}" role="dialog" aria-labelledby="popup-title-${p.id}">
       ${contentHtml(p)}
       ${footerHtml()}
     </section>`).join('');
@@ -64,7 +64,7 @@ function buildIndividual(items) {
 
 function buildSlider(items) {
   return `
-    <section class="popup popup--slider" data-ids="${items.map((p) => p.id).join(',')}" role="dialog" aria-roledescription="슬라이드 팝업" aria-label="공지 및 이벤트" tabindex="-1">
+    <section class="popup popup--slider" data-ids="${items.map((p) => p.id).join(',')}" role="dialog" aria-roledescription="슬라이드 팝업" aria-label="공지 및 이벤트">
       <div class="popup__viewport">
         <div class="popup__track">
           ${items.map((p, i) => `
@@ -112,7 +112,7 @@ function initSlider(el) {
   });
   el.addEventListener('mouseenter', stop);
   el.addEventListener('mouseleave', play);
-  el.addEventListener('focusin', (e) => { if (e.target !== el) stop(); });
+  el.addEventListener('focusin', stop);
   // 스와이프
   let x0 = null;
   el.querySelector('.popup__viewport').addEventListener('pointerdown', (e) => { x0 = e.clientX; });
@@ -129,14 +129,6 @@ function initSlider(el) {
   go(0);
   play();
   return stop;
-}
-
-/** 팝업 카드로 포커스를 옮기고, 열릴 때는 항상 포커스 링이 보이도록 표시한다 (카드를 벗어나면 해제) */
-function focusCard(card) {
-  if (!card) return;
-  card.classList.add('is-focused');
-  card.addEventListener('blur', () => card.classList.remove('is-focused'), { once: true });
-  card.focus({ preventScroll: true });
 }
 
 export async function showPopups() {
@@ -157,6 +149,7 @@ export async function showPopups() {
   layer.className = `popup-layer${slide ? ' popup-layer--slide' : ''}`;
   layer.setAttribute('aria-modal', 'true');
   layer.setAttribute('aria-label', '알림 팝업');
+  layer.tabIndex = -1;
   layer.innerHTML = `<div class="popup-stack">${slide ? buildSlider(items) : buildIndividual(items)}</div>`;
 
   const lastFocus = document.activeElement;
@@ -172,7 +165,7 @@ export async function showPopups() {
     if (rememberToday) hideToday(popup.dataset.ids.split(','));
     popup.remove();
     const next = layer.querySelector('.popup');
-    if (next) focusCard(next);
+    if (next) { next.tabIndex = -1; next.focus({ preventScroll: true }); }
     else closeLayer();
   };
   const onKey = (e) => {
@@ -183,8 +176,7 @@ export async function showPopups() {
     if (!f.length) return;
     const first = f[0];
     const last = f[f.length - 1];
-    const i = f.indexOf(document.activeElement);
-    if (e.shiftKey && i <= 0) {
+    if (e.shiftKey && (document.activeElement === first || !layer.contains(document.activeElement) || document.activeElement === layer)) {
       e.preventDefault(); last.focus();
     } else if (!e.shiftKey && (document.activeElement === last || !layer.contains(document.activeElement))) {
       e.preventDefault(); first.focus();
@@ -201,6 +193,5 @@ export async function showPopups() {
   document.body.append(layer);
   document.documentElement.classList.add('popup-open');
   if (slide) stops.push(initSlider(layer.querySelector('.popup--slider')));
-  // 첫 팝업 카드에 포커스 — 카드 둘레에 포커스 링이 보이고, 스크린리더는 팝업 제목을 읽는다
-  focusCard(layer.querySelector('.popup'));
+  layer.focus({ preventScroll: true }); // Tab 한 번이면 첫 버튼으로 이동
 }
