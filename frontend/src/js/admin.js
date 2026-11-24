@@ -190,7 +190,7 @@ form.addEventListener('submit', (e) => {
 });
 form.addEventListener('reset', () => setTimeout(() => form.requestSubmit(), 0));
 
-form.querySelector('.quick').addEventListener('click', (e) => {
+document.getElementById('quickRange').addEventListener('click', (e) => {
   const r = e.target.closest('[data-range]')?.dataset.range;
   if (r == null) return;
   const day = (offset) => new Date(Date.now() + 9 * 3600e3 - offset * 86400e3).toISOString().slice(0, 10);

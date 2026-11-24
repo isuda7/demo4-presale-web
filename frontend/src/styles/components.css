@@ -7,6 +7,15 @@
   position: fixed; inset: 0 0 auto; z-index: 100; height: var(--header-h);
   color: #fff; transition: background var(--dur) var(--ease), box-shadow var(--dur) var(--ease), color var(--dur);
 }
+.site-header::before {
+  /* 기본(투명) 상태 배경 블러 — 헤더 자체에 backdrop-filter를 주면 모바일 고정 메뉴(.gnb)의 기준이 헤더로 바뀌므로 가상요소에 적용 */
+  content: ''; position: absolute; inset: 0; z-index: -1;
+  background: rgba(7, 24, 34, .22);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  transition: background var(--dur) var(--ease);
+}
+.site-header.is-solid::before, .site-header--solid::before { background: transparent; }
 .site-header::after { content: ''; position: absolute; inset: auto 0 0; height: 1px; background: rgba(255,255,255,.14); }
 .site-header.is-solid, .site-header--solid { background: var(--navy-900); box-shadow: var(--shadow-sm); }
 .site-header__inner { height: 100%; display: flex; align-items: center; gap: var(--sp-5); }

@@ -69,20 +69,14 @@
         <h2 id="listTitle" class="sr-only">신청 목록</h2>
         <form class="filters" id="filterForm">
           <div class="field filters__q"><label class="field__label" for="q">검색</label><input class="input" id="q" name="q" placeholder="이름, 연락처, 문의내용, 메모" /></div>
-          <div class="field"><label class="field__label" for="status">상태</label><select class="select" id="status" name="status"><option value="">전체</option></select></div>
-          <div class="field"><label class="field__label" for="unitType">타입</label><select class="select" id="unitType" name="unitType"><option value="">전체</option></select></div>
+          <div class="field filters__sel"><label class="field__label" for="status">상태</label><select class="select" id="status" name="status"><option value="">전체</option></select></div>
+          <div class="field filters__sel"><label class="field__label" for="unitType">타입</label><select class="select" id="unitType" name="unitType"><option value="">전체</option></select></div>
           <div class="field filters__period">
             <span class="field__label" id="periodLabel">신청 기간</span>
             <div class="period" role="group" aria-labelledby="periodLabel">
               <input class="input" type="date" name="from" aria-label="시작일" />
               <span aria-hidden="true">~</span>
               <input class="input" type="date" name="to" aria-label="종료일" />
-            </div>
-            <div class="quick" role="group" aria-label="빠른 기간 선택">
-              <button type="button" data-range="0">오늘</button>
-              <button type="button" data-range="7">7일</button>
-              <button type="button" data-range="30">30일</button>
-              <button type="button" data-range="all">전체</button>
             </div>
           </div>
           <div class="filters__actions">
@@ -92,7 +86,15 @@
         </form>
 
         <div class="list-toolbar">
-          <p class="list-toolbar__count" id="resultCount" aria-live="polite"></p>
+          <div class="list-toolbar__left">
+            <p class="list-toolbar__count" id="resultCount" aria-live="polite"></p>
+            <div class="quick" id="quickRange" role="group" aria-label="빠른 기간 선택">
+              <button type="button" data-range="0">오늘</button>
+              <button type="button" data-range="7">7일</button>
+              <button type="button" data-range="30">30일</button>
+              <button type="button" data-range="all">전체</button>
+            </div>
+          </div>
           <div class="list-toolbar__actions">
             <button class="btn btn--danger btn--sm" type="button" id="bulkDelete" disabled>선택 삭제</button>
             <a class="btn btn--outline btn--sm" id="csvBtn" href="/api/admin/applications.csv">CSV 다운로드</a>
