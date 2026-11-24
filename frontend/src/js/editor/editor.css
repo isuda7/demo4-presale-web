@@ -13,6 +13,10 @@
 .xe-btn--primary { background: #2f7de1; border-color: #2f7de1; }
 .xe-btn--primary:hover { background: #1f6acb; }
 .xe-btn--on { background: #ffcf6b; border-color: #ffcf6b; color: #10151a; }
+/* 편집 중(켜짐) 버튼: 일반 hover(흰 반투명)가 노란 배경을 덮지 않도록 같은 톤으로 한 단계 진하게 */
+.xe-btn--on:hover { background: #f2b83c; border-color: #f2b83c; color: #10151a; }
+.xe-btn--on:active { background: #e3a82a; border-color: #e3a82a; }
+.xe-btn:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 2px; }
 .xe-btn[disabled] { opacity: .4; pointer-events: none; }
 a.xe-btn { display: inline-flex; align-items: center; }
 body.has-xe-bar { padding-top: 52px; }
@@ -51,6 +55,8 @@ body.is-editing .xe-img-wrap { position: relative; }
 .xe-pop__preview { width: 100%; max-height: 160px; object-fit: contain; background: #f2eee8; }
 .xe-pop__row { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
 .xe-pop__row .xe-btn { color: #1b1d1f; border-color: #c9c3b9; }
+.xe-pop__row .xe-btn:hover { background: #f2eee8; border-color: #1b1d1f; }
+.xe-pop__row .xe-btn--primary:hover { background: #1f6acb; border-color: #1f6acb; }
 .xe-pop__row .xe-btn--primary { color: #fff; }
 .xe-pop__hint { font-size: 12px; color: #8d9197; }
 .xe-pop__reset { margin-right: auto; }
