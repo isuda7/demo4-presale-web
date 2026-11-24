@@ -43,11 +43,16 @@
     <main class="admin-main">
       <div class="admin-head">
         <div>
-          <p class="kicker">Applications</p>
-          <h1>관심고객 신청 관리</h1>
+          <p class="kicker">Admin</p>
+          <h1 id="adminTitle">관심고객 신청 관리</h1>
+        </div>
+        <div class="admin-tabs" role="tablist" aria-label="관리 메뉴">
+          <button type="button" role="tab" id="tab-apps" aria-controls="view-apps" aria-selected="true">신청 관리</button>
+          <button type="button" role="tab" id="tab-popups" aria-controls="view-popups" aria-selected="false" tabindex="-1">팝업 관리</button>
         </div>
       </div>
 
+      <div class="admin-view" id="view-apps" role="tabpanel" aria-labelledby="tab-apps">
       <section class="stats" id="stats" aria-label="상태별 현황"></section>
 
       <section class="panel closing" aria-labelledby="closingTitle">
@@ -124,7 +129,88 @@
         </div>
         <nav class="pager" id="pager" aria-label="페이지 이동"></nav>
       </section>
+      </div>
+
+      <div class="admin-view" id="view-popups" role="tabpanel" aria-labelledby="tab-popups" hidden>
+        <section class="panel" aria-labelledby="popupModeTitle">
+          <h2 id="popupModeTitle">팝업 노출 방식</h2>
+          <p class="panel__desc">메인 페이지에 노출 중인 팝업이 2개 이상일 때 적용됩니다. 1개일 때는 항상 단독 팝업으로 보입니다.</p>
+          <div class="mode-cards" role="radiogroup" aria-labelledby="popupModeTitle">
+            <label class="mode-card">
+              <input type="radio" name="popupMode" value="individual" />
+              <span class="mode-card__art mode-card__art--individual" aria-hidden="true"><i></i><i></i></span>
+              <span class="mode-card__body"><strong>개별 팝업 <em>기본</em></strong><small>팝업을 나란히 각각 띄우고, 하나씩 닫거나 '오늘 하루 보지 않기'를 할 수 있습니다.</small></span>
+            </label>
+            <label class="mode-card">
+              <input type="radio" name="popupMode" value="slide" />
+              <span class="mode-card__art mode-card__art--slide" aria-hidden="true"><i></i><b>‹ ›</b></span>
+              <span class="mode-card__body"><strong>슬라이드 팝업</strong><small>하나의 창에서 좌우로 넘겨 봅니다. 5초마다 자동으로 넘어가며 '오늘 하루 보지 않기'는 전체에 적용됩니다.</small></span>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel" aria-labelledby="popupListTitle">
+          <div class="popup-admin-head">
+            <div>
+              <h2 id="popupListTitle">팝업 목록</h2>
+              <p class="panel__desc" id="popupSummary"></p>
+            </div>
+            <div class="list-toolbar__actions">
+              <a class="btn btn--outline btn--sm" href="/?popup=preview" target="_blank" rel="noopener">메인에서 미리보기</a>
+              <button class="btn btn--sm" type="button" id="addPopup">팝업 추가</button>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table class="table admin-table popup-table">
+              <thead>
+                <tr>
+                  <th scope="col">순서</th>
+                  <th scope="col">구분</th>
+                  <th scope="col">이미지</th>
+                  <th scope="col">제목</th>
+                  <th scope="col">노출 기간</th>
+                  <th scope="col">노출</th>
+                  <th scope="col">관리</th>
+                </tr>
+              </thead>
+              <tbody id="popupRows"></tbody>
+            </table>
+          </div>
+        </section>
+      </div>
     </main>
+  </div>
+
+  <div class="modal" id="popupModal" role="dialog" aria-modal="true" aria-labelledby="popupFormTitle">
+    <form class="modal__panel popup-form" id="popupForm" novalidate>
+      <button class="modal__close" type="button" aria-label="닫기" data-close>×</button>
+      <h2 id="popupFormTitle" class="modal-title">팝업 추가</h2>
+      <div class="popup-form__grid">
+        <div class="field"><label class="field__label" for="pf-type">구분</label>
+          <select class="select" id="pf-type" name="type"><option value="event">이벤트</option><option value="notice">긴급공지</option><option value="general">일반</option></select></div>
+        <div class="field"><label class="field__label" for="pf-order">노출 순서</label><input class="input" id="pf-order" name="sortOrder" type="number" min="0" max="999" value="0" /></div>
+        <div class="field field--full"><label class="field__label" for="pf-title">제목 <span class="req">*</span></label><input class="input" id="pf-title" name="title" maxlength="100" required /></div>
+        <div class="field field--full"><label class="field__label" for="pf-body">내용</label><textarea class="textarea" id="pf-body" name="body" maxlength="2000" rows="4"></textarea></div>
+        <div class="field field--full">
+          <span class="field__label">이미지 <small class="field__hint">(선택 · 가로 1200px 이하로 자동 축소)</small></span>
+          <div class="pf-image">
+            <img class="pf-image__preview" id="pf-preview" alt="이미지 미리보기" hidden />
+            <div class="pf-image__ctrl">
+              <input type="file" id="pf-file" accept="image/jpeg,image/png,image/webp,image/gif" aria-label="이미지 파일 업로드" />
+              <input class="input" id="pf-image" name="image" placeholder="또는 https://... · /images/..." aria-label="이미지 주소" />
+              <button type="button" class="link-btn link-btn--danger" id="pf-image-clear">이미지 삭제</button>
+            </div>
+          </div>
+        </div>
+        <div class="field"><label class="field__label" for="pf-link">링크 주소</label><input class="input" id="pf-link" name="linkUrl" placeholder="/apply.html" /></div>
+        <div class="field"><label class="field__label" for="pf-label">버튼 문구</label><input class="input" id="pf-label" name="linkLabel" maxlength="40" placeholder="자세히 보기" /></div>
+        <div class="field"><label class="field__label" for="pf-start">노출 시작일</label><input class="input" id="pf-start" name="startDate" type="date" /></div>
+        <div class="field"><label class="field__label" for="pf-end">노출 종료일</label><input class="input" id="pf-end" name="endDate" type="date" /></div>
+        <label class="check field--full"><input type="checkbox" name="isActive" checked /> 메인 페이지에 노출</label>
+      </div>
+      <p class="form-alert" id="pf-error" role="alert" hidden></p>
+      <div class="modal__actions"><button class="btn btn--outline btn--sm" type="button" data-close>취소</button><button class="btn btn--sm" type="submit">저장</button></div>
+    </form>
   </div>
 
   <div class="modal" id="memoModal" role="dialog" aria-modal="true" aria-labelledby="memoTitle">

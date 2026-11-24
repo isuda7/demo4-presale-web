@@ -1,7 +1,7 @@
 import { createClient } from '@libsql/client';
 import { mkdirSync } from 'node:fs';
 import { dirname } from 'node:path';
-import { SCHEMA, DEFAULT_SETTINGS } from './schema.js';
+import { SCHEMA, DEFAULT_SETTINGS, DEFAULT_POPUPS } from './schema.js';
 
 let client = null;
 let schemaReady = null;
@@ -40,6 +40,16 @@ export function ensureSchema() {
         args: [key, value],
       }));
       await c.batch(stmts, 'write');
+      // 기본 팝업: 플래그를 먼저 원자적으로 세워 동시 콜드스타트에서도 한 번만 넣는다.
+      const flag = await c.execute("INSERT OR IGNORE INTO settings (key, value) VALUES ('popups_seeded', '1')");
+      if (flag.rowsAffected === 1) {
+        const now = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 19).replace('T', ' ');
+        await c.batch(DEFAULT_POPUPS.map((p) => ({
+          sql: `INSERT INTO popups (type, title, body, image, link_url, link_label, sort_order, is_active, created_at, updated_at)
+                VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)`,
+          args: [p.type, p.title, p.body, p.image, p.link_url, p.link_label, p.sort_order, now, now],
+        })), 'write');
+      }
     })().catch((err) => {
       schemaReady = null;
       throw err;

@@ -39,6 +39,7 @@ async function showAdmin() {
   view.login.hidden = true;
   view.admin.hidden = false;
   await Promise.all([loadSettings(), loadList()]);
+  if (location.hash === '#popups') selectTab('popups');
 }
 
 $('#loginForm').addEventListener('submit', async (e) => {
@@ -291,6 +292,201 @@ $('#rows').addEventListener('click', (e) => {
   const a = state.items.find((x) => x.id === Number(tr.dataset.id));
   if (act === 'detail') openDetail(a);
   if (act === 'delete') deleteIds([a.id]);
+});
+
+/* ---------- 탭 (신청 관리 / 팝업 관리) ---------- */
+const TAB_TITLES = { apps: '관심고객 신청 관리', popups: '메인 팝업 관리' };
+let popupsLoaded = false;
+function selectTab(name) {
+  document.querySelectorAll('.admin-tabs [role=tab]').forEach((t) => {
+    const on = t.id === `tab-${name}`;
+    t.setAttribute('aria-selected', String(on));
+    t.tabIndex = on ? 0 : -1;
+    document.getElementById(t.getAttribute('aria-controls')).hidden = !on;
+  });
+  $('#adminTitle').textContent = TAB_TITLES[name];
+  history.replaceState(null, '', name === 'popups' ? '#popups' : location.pathname);
+  if (name === 'popups' && !popupsLoaded) loadPopups().catch((err) => toast(err.message, 'error'));
+}
+document.querySelector('.admin-tabs').addEventListener('click', (e) => {
+  const t = e.target.closest('[role=tab]');
+  if (t) selectTab(t.id.replace('tab-', ''));
+});
+document.querySelector('.admin-tabs').addEventListener('keydown', (e) => {
+  if (e.key !== 'ArrowRight' && e.key !== 'ArrowLeft') return;
+  const next = document.querySelector('.admin-tabs [aria-selected=false]');
+  selectTab(next.id.replace('tab-', ''));
+  next.focus();
+});
+
+/* ---------- 팝업 관리 ---------- */
+const popupState = { items: [], types: {}, editing: null, image: null };
+
+function popupPeriod(p) {
+  if (!p.startDate && !p.endDate) return '상시';
+  return `${p.startDate || '제한 없음'} ~ ${p.endDate || '제한 없음'}`;
+}
+function popupLive(p) {
+  const t = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+  return p.isActive && (!p.startDate || p.startDate <= t) && (!p.endDate || p.endDate >= t);
+}
+
+function renderPopups() {
+  const live = popupState.items.filter(popupLive).length;
+  $('#popupSummary').textContent = `전체 ${popupState.items.length}개 · 현재 메인 노출 ${live}개`;
+  const tbody = $('#popupRows');
+  if (!popupState.items.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty">등록된 팝업이 없습니다. [팝업 추가]로 만들어 주세요.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = popupState.items.map((p) => `
+    <tr data-id="${p.id}">
+      <td>${p.sortOrder}</td>
+      <td><span class="badge badge--popup-${esc(p.type)}">${esc(popupState.types[p.type] || p.type)}</span></td>
+      <td>${p.image ? `<img class="popup-thumb" src="${esc(p.image)}" alt="" />` : '<span class="muted">없음</span>'}</td>
+      <td class="td-msg"><p><strong>${esc(p.title)}</strong></p><p class="muted">${esc(p.body || '')}</p></td>
+      <td>${esc(popupPeriod(p))}${p.isActive && !popupLive(p) ? '<br><small class="muted">기간 외</small>' : ''}</td>
+      <td><label class="switch switch--sm"><input type="checkbox" class="popup-active" ${p.isActive ? 'checked' : ''} aria-label="${esc(p.title)} 노출" /></label></td>
+      <td><div class="row-actions"><button type="button" class="link-btn" data-act="edit">수정</button><button type="button" class="link-btn link-btn--danger" data-act="delete">삭제</button></div></td>
+    </tr>`).join('');
+}
+
+async function loadPopups() {
+  const data = await api('/api/admin/popups');
+  popupState.items = data.items;
+  popupState.types = data.types;
+  popupsLoaded = true;
+  document.querySelectorAll('input[name=popupMode]').forEach((r) => { r.checked = r.value === data.mode; });
+  renderPopups();
+}
+
+document.querySelectorAll('input[name=popupMode]').forEach((r) => r.addEventListener('change', async () => {
+  try {
+    const s = await api('/api/admin/settings', { method: 'PUT', body: JSON.stringify({ popupMode: r.value }) });
+    toast(s.popupMode === 'slide' ? '슬라이드 팝업으로 변경했습니다.' : '개별 팝업으로 변경했습니다.');
+  } catch (err) {
+    toast(err.message, 'error');
+    loadPopups();
+  }
+}));
+
+$('#popupRows').addEventListener('change', async (e) => {
+  if (!e.target.classList.contains('popup-active')) return;
+  const id = Number(e.target.closest('tr').dataset.id);
+  try {
+    await api(`/api/admin/popups/${id}`, { method: 'PATCH', body: JSON.stringify({ isActive: e.target.checked }) });
+    popupState.items.find((p) => p.id === id).isActive = e.target.checked;
+    renderPopups();
+    toast(e.target.checked ? '팝업을 노출합니다.' : '팝업 노출을 중지했습니다.');
+  } catch (err) { e.target.checked = !e.target.checked; toast(err.message, 'error'); }
+});
+
+$('#popupRows').addEventListener('click', async (e) => {
+  const act = e.target.closest('[data-act]')?.dataset.act;
+  const tr = e.target.closest('tr[data-id]');
+  if (!act || !tr) return;
+  const p = popupState.items.find((x) => x.id === Number(tr.dataset.id));
+  if (act === 'edit') openPopupForm(p);
+  if (act === 'delete') {
+    if (!confirm(`'${p.title}' 팝업을 삭제할까요? 삭제하면 복구할 수 없습니다.`)) return;
+    try {
+      await api(`/api/admin/popups/${p.id}`, { method: 'DELETE' });
+      toast('팝업을 삭제했습니다.');
+      await loadPopups();
+    } catch (err) { toast(err.message, 'error'); }
+  }
+});
+
+const pModal = $('#popupModal');
+const pForm = $('#popupForm');
+const pf = pForm.elements;
+function setPreview(src) {
+  popupState.image = src || null;
+  const img = $('#pf-preview');
+  img.hidden = !src;
+  if (src) img.src = src; else img.removeAttribute('src');
+}
+function openPopupForm(p = null) {
+  popupState.editing = p;
+  pForm.reset();
+  $('#pf-error').hidden = true;
+  $('#popupFormTitle').textContent = p ? '팝업 수정' : '팝업 추가';
+  pf.type.value = p?.type || 'event';
+  pf.sortOrder.value = p?.sortOrder ?? (Math.max(0, ...popupState.items.map((x) => x.sortOrder)) + 1);
+  pf.title.value = p?.title || '';
+  pf.body.value = p?.body || '';
+  pf.image.value = p?.image && !p.image.startsWith('data:') ? p.image : '';
+  pf.linkUrl.value = p?.linkUrl || '';
+  pf.linkLabel.value = p?.linkLabel || '';
+  pf.startDate.value = p?.startDate || '';
+  pf.endDate.value = p?.endDate || '';
+  pf.isActive.checked = p ? p.isActive : true;
+  setPreview(p?.image || null);
+  pModal.classList.add('is-open');
+  pf.title.focus();
+}
+const closePopupForm = () => pModal.classList.remove('is-open');
+$('#addPopup').addEventListener('click', () => openPopupForm());
+pModal.addEventListener('click', (e) => { if (e.target === pModal || e.target.closest('[data-close]')) closePopupForm(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closePopupForm(); });
+
+function resizeImage(file, maxW = 1200, quality = 0.85) {
+  return new Promise((resolve, reject) => {
+    if (!/^image\/(jpeg|png|webp|gif)$/.test(file.type)) { reject(new Error('JPG, PNG, WEBP, GIF 파일만 가능합니다.')); return; }
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, maxW / img.naturalWidth);
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.naturalWidth * k);
+      c.height = Math.round(img.naturalHeight * k);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url);
+      let data = c.toDataURL('image/webp', quality);
+      if (!data.startsWith('data:image/webp')) data = c.toDataURL('image/jpeg', quality);
+      if (data.length > 3_000_000) reject(new Error('이미지가 너무 큽니다.')); else resolve(data);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('이미지를 읽을 수 없습니다.')); };
+    img.src = url;
+  });
+}
+$('#pf-file').addEventListener('change', async (e) => {
+  const f = e.target.files[0];
+  if (!f) return;
+  try { setPreview(await resizeImage(f)); pf.image.value = ''; } catch (err) { toast(err.message, 'error'); }
+});
+pf.image.addEventListener('input', () => setPreview(pf.image.value.trim() || null));
+$('#pf-image-clear').addEventListener('click', () => { pf.image.value = ''; $('#pf-file').value = ''; setPreview(null); });
+
+pForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const err = $('#pf-error');
+  err.hidden = true;
+  if (!pf.title.value.trim()) { err.textContent = '제목을 입력해 주세요.'; err.hidden = false; pf.title.focus(); return; }
+  const body = {
+    type: pf.type.value,
+    sortOrder: Number(pf.sortOrder.value) || 0,
+    title: pf.title.value.trim(),
+    body: pf.body.value.trim(),
+    image: popupState.image,
+    linkUrl: pf.linkUrl.value.trim(),
+    linkLabel: pf.linkLabel.value.trim(),
+    startDate: pf.startDate.value || null,
+    endDate: pf.endDate.value || null,
+    isActive: pf.isActive.checked,
+  };
+  const btn = pForm.querySelector('[type=submit]');
+  btn.disabled = true;
+  try {
+    const editing = popupState.editing;
+    await api(editing ? `/api/admin/popups/${editing.id}` : '/api/admin/popups', { method: editing ? 'PUT' : 'POST', body: JSON.stringify(body) });
+    closePopupForm();
+    toast(editing ? '팝업을 수정했습니다.' : '팝업을 추가했습니다.');
+    await loadPopups();
+  } catch (e2) {
+    err.textContent = e2.message;
+    err.hidden = false;
+  } finally { btn.disabled = false; }
 });
 
 /* ---------- boot ---------- */

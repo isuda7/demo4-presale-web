@@ -15,6 +15,7 @@
 .admin-top .brand__name small { font-family: var(--font-en); font-size: 11px; letter-spacing: .2em; opacity: .6; margin-left: 6px; }
 .admin-top__actions { display: flex; gap: 8px; flex-wrap: wrap; }
 .admin-main { max-width: 1440px; margin: 0 auto; padding: 32px var(--gutter) 80px; display: grid; gap: 20px; }
+.admin-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; flex-wrap: wrap; }
 .admin-head h1 { font-size: var(--fs-h3); font-weight: 700; margin-top: 4px; }
 .panel { background: #fff; padding: clamp(18px, 2.4vw, 28px); border: 1px solid var(--line); }
 .panel h2 { font-size: 17px; font-weight: 700; }
@@ -93,3 +94,48 @@
 .detail dt { color: var(--ink-500); }
 .detail dd { white-space: pre-line; }
 .modal__actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; }
+
+/* tabs */
+.admin-tabs { display: flex; border: 1px solid var(--navy-800); }
+.admin-tabs [role=tab] { min-height: 42px; padding: 0 22px; border: 0; background: #fff; color: var(--navy-800); font-size: 14px; font-weight: 600; }
+.admin-tabs [role=tab][aria-selected='true'] { background: var(--navy-800); color: #fff; }
+.admin-view { display: grid; gap: 20px; }
+
+/* popup admin */
+.mode-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.mode-card { position: relative; display: grid; grid-template-columns: 96px 1fr; gap: 16px; align-items: center; padding: 16px; border: 1px solid var(--line); cursor: pointer; transition: border-color var(--dur-fast), background var(--dur-fast); }
+.mode-card:hover { border-color: var(--navy-600); }
+.mode-card input { position: absolute; opacity: 0; }
+.mode-card:has(input:checked) { border: 2px solid var(--navy-800); padding: 15px; background: var(--stone-50); }
+.mode-card:has(input:focus-visible) { outline: 2px solid var(--color-focus); outline-offset: 2px; }
+.mode-card__body { display: grid; gap: 4px; }
+.mode-card__body strong { font-size: 15px; }
+.mode-card__body em { font-style: normal; font-size: 11px; font-weight: 600; color: #fff; background: var(--accent-copper); padding: 1px 6px; margin-left: 4px; vertical-align: 2px; }
+.mode-card__body small { font-size: 13px; color: var(--ink-500); line-height: 1.5; }
+.mode-card__art { height: 64px; background: var(--stone-200); display: flex; align-items: center; justify-content: center; gap: 6px; position: relative; }
+.mode-card__art i { width: 26px; height: 40px; background: #fff; border-top: 3px solid var(--navy-800); box-shadow: var(--shadow-sm); }
+.mode-card__art--slide i { width: 40px; }
+.mode-card__art--slide b { position: absolute; inset: 0; display: flex; align-items: center; justify-content: space-between; padding: 0 12px; font-size: 18px; color: var(--navy-800); }
+@media (max-width: 760px) { .mode-cards { grid-template-columns: 1fr; } }
+
+.popup-admin-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.popup-table { min-width: 860px; }
+.popup-thumb { width: 72px; height: 46px; object-fit: cover; margin: 0 auto; background: var(--stone-200); }
+.muted { color: var(--ink-400); font-size: 12.5px; }
+.badge--popup-event { background: #f6e6d9; color: #9a5223; }
+.badge--popup-notice { background: #f6e0de; color: #9b3029; }
+.badge--popup-general { background: var(--stone-200); color: var(--ink-700); }
+.switch--sm input { width: 42px; height: 24px; }
+.switch--sm input::after { width: 18px; height: 18px; }
+.switch--sm input:checked { background: var(--navy-700); }
+.switch--sm input:checked::after { transform: translateX(18px); }
+
+.popup-form { width: min(680px, 100%); }
+.popup-form__grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.popup-form__grid .field--full { grid-column: 1 / -1; }
+.pf-image { display: grid; grid-template-columns: auto 1fr; gap: 12px; align-items: start; }
+.pf-image__preview { width: 140px; aspect-ratio: 16 / 10; object-fit: cover; background: var(--stone-200); }
+.pf-image__ctrl { display: grid; gap: 8px; justify-items: start; }
+.pf-image__ctrl .input { width: 100%; }
+.form-alert { padding: 12px 14px; background: #f8e8e6; color: var(--color-danger); font-size: 14px; margin-top: 12px; }
+@media (max-width: 600px) { .popup-form__grid, .pf-image { grid-template-columns: 1fr; } }

@@ -75,6 +75,7 @@
 | 폼 | `.field`, `.input`, `.select`, `.textarea`, `.check`, `.chip-group`, `.switch` | 오류 상태는 `aria-invalid` |
 | 배지 | `.badge--new / contacted / visited / contracted / hold` | 신청 상태 |
 | 모달/토스트 | `.modal`, `.lightbox`, `.toast` | |
+| 메인 팝업 | `.popup-layer`, `.popup` (`--event` 구리색·`--notice` 적색 상단 라인), `.popup--slider` | 하단 네이비 바에 '오늘 하루 보지 않기 / 닫기'. 이미지 없는 슬라이드는 스트라이프·아치 플레이스홀더 |
 | 편집기 | `.xe-bar`, `.xe-pop` (editor 청크 전용) | 관리자에게만 로드 |
 
 ## 4. 접근성

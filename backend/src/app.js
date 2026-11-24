@@ -2,12 +2,12 @@ import { Hono } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { bodyLimit } from 'hono/body-limit';
 import { db, ensureSchema } from './db.js';
-import { STATUSES, UNIT_TYPES } from './schema.js';
+import { STATUSES, UNIT_TYPES, POPUP_TYPES, POPUP_MODES } from './schema.js';
 import {
   clientIp, passwordMatches, tooManyAttempts, recordFail, clearFails,
   issueSession, clearSession, readSession, requireAdmin,
 } from './auth.js';
-import { validateApplication, validateContentItem, nowKst, isDate } from './validate.js';
+import { validateApplication, validateContentItem, validatePopup, nowKst, todayKst, isDate } from './validate.js';
 
 const app = new Hono().basePath('/api');
 
@@ -42,6 +42,7 @@ async function getSettings() {
     applyClosed: s.apply_closed === '1',
     closedTitle: s.closed_title || '',
     closedMessage: s.closed_message || '',
+    popupMode: POPUP_MODES.includes(s.popup_mode) ? s.popup_mode : 'individual',
   };
 }
 
@@ -92,6 +93,37 @@ app.post('/applications', limitJson(20 * 1024), async (c) => {
       value.agreePrivacy, value.agreeMarketing, now, now],
   });
   return c.json({ ok: true, id: Number(r.lastInsertRowid) }, 201);
+});
+
+const mapPopup = (r) => ({
+  id: Number(r.id),
+  type: r.type,
+  typeLabel: POPUP_TYPES[r.type] || r.type,
+  title: r.title,
+  body: r.body,
+  image: r.image,
+  linkUrl: r.link_url,
+  linkLabel: r.link_label,
+  startDate: r.start_date,
+  endDate: r.end_date,
+  sortOrder: Number(r.sort_order),
+  isActive: Number(r.is_active) === 1,
+  updatedAt: r.updated_at,
+});
+
+/** 메인 노출 팝업: 노출 중이며 기간 안에 있는 것만, 순서대로 */
+app.get('/popups', async (c) => {
+  const today = todayKst();
+  const [rows, s] = await Promise.all([
+    db().execute({
+      sql: `SELECT * FROM popups WHERE is_active = 1
+              AND (start_date IS NULL OR start_date <= ?) AND (end_date IS NULL OR end_date >= ?)
+            ORDER BY sort_order ASC, id ASC`,
+      args: [today, today],
+    }),
+    getSettings(),
+  ]);
+  return c.json({ ok: true, mode: s.popupMode, items: rows.rows.map(mapPopup) });
 });
 
 /* ───────── 인증 ───────── */
@@ -263,6 +295,10 @@ admin.put('/settings', limitJson(8 * 1024), async (c) => {
   if (typeof body.applyClosed === 'boolean') put('apply_closed', body.applyClosed ? '1' : '0');
   if (typeof body.closedTitle === 'string') put('closed_title', body.closedTitle.slice(0, 100));
   if (typeof body.closedMessage === 'string') put('closed_message', body.closedMessage.slice(0, 1000));
+  if (body.popupMode !== undefined) {
+    if (!POPUP_MODES.includes(body.popupMode)) return c.json({ ok: false, message: '팝업 노출 방식이 올바르지 않습니다.' }, 400);
+    put('popup_mode', body.popupMode);
+  }
   if (!stmts.length) return c.json({ ok: false, message: '변경할 설정이 없습니다.' }, 400);
   await db().batch(stmts, 'write');
   return c.json({ ok: true, ...(await getSettings()) });
@@ -291,6 +327,52 @@ admin.put('/content', limitJson(8 * 1024 * 1024), async (c) => {
 admin.delete('/content/:key', async (c) => {
   await db().execute({ sql: 'DELETE FROM content WHERE key = ?', args: [c.req.param('key')] });
   return c.json({ ok: true });
+});
+
+/* ---------- 팝업 관리 ---------- */
+admin.get('/popups', async (c) => {
+  const r = await db().execute('SELECT * FROM popups ORDER BY sort_order ASC, id ASC');
+  const s = await getSettings();
+  return c.json({ ok: true, mode: s.popupMode, types: POPUP_TYPES, items: r.rows.map(mapPopup) });
+});
+
+admin.post('/popups', limitJson(4 * 1024 * 1024), async (c) => {
+  const { value: v, error } = validatePopup(await readJson(c));
+  if (error) return c.json({ ok: false, message: error }, 400);
+  const now = nowKst();
+  const r = await db().execute({
+    sql: `INSERT INTO popups (type, title, body, image, link_url, link_label, start_date, end_date, sort_order, is_active, created_at, updated_at)
+          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    args: [v.type, v.title, v.body, v.image, v.linkUrl, v.linkLabel, v.startDate, v.endDate, v.sortOrder, v.isActive, now, now],
+  });
+  return c.json({ ok: true, id: Number(r.lastInsertRowid) }, 201);
+});
+
+admin.put('/popups/:id', limitJson(4 * 1024 * 1024), async (c) => {
+  const id = parseInt(c.req.param('id'), 10);
+  const { value: v, error } = validatePopup(await readJson(c));
+  if (error) return c.json({ ok: false, message: error }, 400);
+  const r = await db().execute({
+    sql: `UPDATE popups SET type = ?, title = ?, body = ?, image = ?, link_url = ?, link_label = ?, start_date = ?, end_date = ?,
+            sort_order = ?, is_active = ?, updated_at = ? WHERE id = ?`,
+    args: [v.type, v.title, v.body, v.image, v.linkUrl, v.linkLabel, v.startDate, v.endDate, v.sortOrder, v.isActive, nowKst(), id],
+  });
+  if (!r.rowsAffected) return c.json({ ok: false, message: '팝업을 찾을 수 없습니다.' }, 404);
+  return c.json({ ok: true });
+});
+
+admin.patch('/popups/:id', limitJson(1024), async (c) => {
+  const id = parseInt(c.req.param('id'), 10);
+  const body = (await readJson(c)) || {};
+  if (typeof body.isActive !== 'boolean') return c.json({ ok: false, message: '노출 여부 값이 필요합니다.' }, 400);
+  const r = await db().execute({ sql: 'UPDATE popups SET is_active = ?, updated_at = ? WHERE id = ?', args: [body.isActive ? 1 : 0, nowKst(), id] });
+  if (!r.rowsAffected) return c.json({ ok: false, message: '팝업을 찾을 수 없습니다.' }, 404);
+  return c.json({ ok: true });
+});
+
+admin.delete('/popups/:id', async (c) => {
+  const r = await db().execute({ sql: 'DELETE FROM popups WHERE id = ?', args: [parseInt(c.req.param('id'), 10)] });
+  return c.json({ ok: true, deleted: r.rowsAffected });
 });
 
 app.route('/admin', admin);

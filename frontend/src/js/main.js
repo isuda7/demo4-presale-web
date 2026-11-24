@@ -102,3 +102,8 @@ renderSummaryTable(document.getElementById('unitSummaryTable'));
 renderSummaryTable(document.getElementById('unitSummaryTable2'));
 renderUnits();
 initSite();
+
+// 메인 페이지에서만 팝업 노출 (관리자 편집 모드 진입 시 제외)
+if (document.body.dataset.page === 'index' && !new URLSearchParams(location.search).has('edit')) {
+  import('./popup.js').then((m) => m.showPopups());
+}

@@ -1,4 +1,4 @@
-import { UNIT_TYPES } from './schema.js';
+import { UNIT_TYPES, POPUP_TYPES } from './schema.js';
 
 /** 한국시간 기준 'YYYY-MM-DD HH:MM:SS' */
 export function nowKst() {
@@ -85,4 +85,31 @@ export function validateContentItem(item) {
     if (value.alt != null && (typeof value.alt !== 'string' || value.alt.length > 300)) return '대체텍스트는 300자 이내여야 합니다.';
   } else return '지원하지 않는 편집 유형입니다.';
   return null;
+}
+
+const IMG_DATA = /^data:image\/(webp|jpeg|png|gif);base64,[A-Za-z0-9+/=]+$/;
+
+/** 팝업 입력 검증. 성공 시 { value }, 실패 시 { error } */
+export function validatePopup(b) {
+  if (!b || typeof b !== 'object') return { error: '잘못된 요청입니다.' };
+  const title = String(b.title ?? '').trim();
+  if (!title || title.length > 100) return { error: '제목은 1~100자로 입력해 주세요.' };
+  const type = String(b.type ?? 'general');
+  if (!(type in POPUP_TYPES)) return { error: '팝업 구분이 올바르지 않습니다.' };
+  const body = String(b.body ?? '').trim();
+  if (body.length > 2000) return { error: '내용은 2000자 이내로 입력해 주세요.' };
+  let image = b.image ? String(b.image) : null;
+  if (image && !((IMG_DATA.test(image) && image.length <= 3_000_000) || (/^(https:\/\/|\/images\/)/.test(image) && image.length <= 1000))) {
+    return { error: '이미지는 3MB 이하 업로드 파일 또는 https:// · /images/ 주소만 가능합니다.' };
+  }
+  const linkUrl = String(b.linkUrl ?? '').trim() || null;
+  if (linkUrl && (!SAFE_HREF.test(linkUrl) || linkUrl.length > 1000)) return { error: '링크는 /, #, http(s)://, tel:, mailto: 로 시작해야 합니다.' };
+  const linkLabel = String(b.linkLabel ?? '').trim().slice(0, 40) || null;
+  const startDate = b.startDate ? String(b.startDate) : null;
+  const endDate = b.endDate ? String(b.endDate) : null;
+  if ((startDate && !isDate(startDate)) || (endDate && !isDate(endDate))) return { error: '노출 기간 형식이 올바르지 않습니다.' };
+  if (startDate && endDate && startDate > endDate) return { error: '노출 종료일은 시작일 이후여야 합니다.' };
+  const sortOrder = Number.isFinite(Number(b.sortOrder)) ? Math.max(0, Math.min(999, Math.trunc(Number(b.sortOrder)))) : 0;
+  const isActive = b.isActive === false ? 0 : 1;
+  return { value: { type, title, body: body || null, image, linkUrl, linkLabel, startDate, endDate, sortOrder, isActive } };
 }
