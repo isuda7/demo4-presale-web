@@ -72,7 +72,16 @@ html.popup-open { overflow: hidden; }
 }
 
 /* ---------- 포커스 (키보드 사용 시에만, 사이트 톤에 맞춘 구리색) ---------- */
-.popup-layer:focus, .popup:focus { outline: none; }
+.popup-layer:focus { outline: none; }
+/* 팝업 카드 포커스: 구리색 링 + 은은한 빛번짐 (어두운 배경 위에서도 또렷하게) */
+.popup-layer .popup:focus { outline: none; }
+.popup-layer .popup:focus-visible,
+.popup-layer .popup.is-focused {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 4px;
+  box-shadow: var(--shadow-lg), 0 0 0 10px rgba(200, 116, 58, .16);
+  transition: outline-offset var(--dur) var(--ease), box-shadow var(--dur) var(--ease);
+}
 .popup__link:focus-visible { outline: var(--focus-ring); outline-offset: 3px; }
 /* 네이비 하단 바: 테두리 대신 밑줄 + 은은한 하이라이트 */
 .popup__foot button:focus-visible {
