@@ -27,7 +27,9 @@ h1, h2, h3, h4, p, ul, ol, dl, dd, figure { margin: 0; }
 ul, ol { padding: 0; list-style: none; }
 table { border-collapse: collapse; width: 100%; }
 
-:focus-visible { outline: 2px solid var(--color-focus); outline-offset: 3px; }
+:focus-visible { outline: var(--focus-ring); outline-offset: 3px; transition: outline-offset var(--dur-fast) var(--ease); }
+/* 스크립트로 옮긴 포커스(팝업 레이어 등 tabindex=-1 컨테이너)는 링을 그리지 않는다 */
+[tabindex='-1']:focus { outline: none; }
 
 .sr-only {
   position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px;

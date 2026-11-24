@@ -44,7 +44,9 @@
   --color-text-inverse: #f4f1ec;
   --color-primary: var(--navy-800);
   --color-primary-hover: var(--navy-600);
-  --color-focus: #4b8fc2;
+  /* 포커스: 카탈로그 구리색 포인트. 흰 배경 대비 3.5:1, 네이비 배경 대비 4.8:1 (WCAG 1.4.11 충족) */
+  --color-focus: #c8743a;
+  --focus-ring: 2px solid var(--color-focus);
   --color-success: #2f7d5b;
   --color-danger: #b2423a;
   --color-warning: #b9822b;

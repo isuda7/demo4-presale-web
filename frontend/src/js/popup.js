@@ -148,6 +148,8 @@ export async function showPopups() {
   const layer = document.createElement('div');
   layer.className = `popup-layer${slide ? ' popup-layer--slide' : ''}`;
   layer.setAttribute('aria-modal', 'true');
+  layer.setAttribute('aria-label', '알림 팝업');
+  layer.tabIndex = -1;
   layer.innerHTML = `<div class="popup-stack">${slide ? buildSlider(items) : buildIndividual(items)}</div>`;
 
   const lastFocus = document.activeElement;
@@ -163,10 +165,23 @@ export async function showPopups() {
     if (rememberToday) hideToday(popup.dataset.ids.split(','));
     popup.remove();
     const next = layer.querySelector('.popup');
-    if (next) next.querySelector('.popup__close')?.focus();
+    if (next) { next.tabIndex = -1; next.focus({ preventScroll: true }); }
     else closeLayer();
   };
-  const onKey = (e) => { if (e.key === 'Escape') closeLayer(); };
+  const onKey = (e) => {
+    if (e.key === 'Escape') { closeLayer(); return; }
+    if (e.key !== 'Tab') return;
+    // 팝업이 열려 있는 동안 Tab 포커스를 레이어 안에 가둔다
+    const f = [...layer.querySelectorAll('a[href], button')].filter((el) => el.tabIndex !== -1 && el.offsetParent !== null);
+    if (!f.length) return;
+    const first = f[0];
+    const last = f[f.length - 1];
+    if (e.shiftKey && (document.activeElement === first || !layer.contains(document.activeElement) || document.activeElement === layer)) {
+      e.preventDefault(); last.focus();
+    } else if (!e.shiftKey && (document.activeElement === last || !layer.contains(document.activeElement))) {
+      e.preventDefault(); first.focus();
+    }
+  };
 
   layer.addEventListener('click', (e) => {
     const act = e.target.closest('[data-act]')?.dataset.act;
@@ -178,5 +193,5 @@ export async function showPopups() {
   document.body.append(layer);
   document.documentElement.classList.add('popup-open');
   if (slide) stops.push(initSlider(layer.querySelector('.popup--slider')));
-  layer.querySelector('.popup__close')?.focus({ preventScroll: true });
+  layer.focus({ preventScroll: true }); // Tab 한 번이면 첫 버튼으로 이동
 }
