@@ -110,7 +110,8 @@
 | `TURSO_DATABASE_URL` | 운영 필수 | `libsql://<db>-<org>.turso.io` 형식. 로컬에서 비우면 파일 DB를 사용 |
 | `TURSO_AUTH_TOKEN` | 운영 필수 | Turso DB 토큰 |
 | `API_PORT` | 선택 | 로컬 API 포트 (기본 8787) |
-| `SITE_URL` | 운영 필수 | 운영 사이트 주소 (사이트맵·canonical·llms.txt 기준) |
+| `SITE_URL` | 선택 | 운영 사이트 주소 (사이트맵·canonical·llms.txt 기준). 비우면 Vercel 운영 주소를 씀 |
+| `GOOGLE_SITE_VERIFICATION` / `NAVER_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` | 선택 | 검색엔진 소유 확인 코드(HTML 태그의 content 값). 메인 페이지에 메타태그로 들어감 |
 
 ## 배포 (Turso + Vercel)
 
@@ -167,7 +168,7 @@
 - 면적표·평면 정보·유의사항·FAQ는 빌드할 때 정적 HTML로 들어갑니다. JavaScript를 실행하지 않는 AI 크롤러도 읽을 수 있습니다.
 - 빌드하면 `sitemap.xml`, `robots.txt`(관리자·API 차단, AI 크롤러 허용), `llms.txt`가 함께 생성됩니다.
 - 페이지별 canonical·OG·트위터 카드·구조화 데이터(WebSite, ApartmentComplex, 타입별 Apartment, FAQPage, BreadcrumbList)가 자동으로 들어갑니다.
-- **운영 배포 전 `SITE_URL` 환경변수에 운영 주소를 넣어야 합니다.** 없으면 Vercel 운영 도메인, 그것도 없으면 `http://localhost:4173`을 씁니다.
+- 기준 주소는 `SITE_URL` → Vercel 운영 도메인 → `http://localhost:4173` 순서로 정해집니다. vercel.app 주소를 쓰는 동안에는 `SITE_URL`이 없어도 됩니다.
 - 사실 정보와 FAQ는 `frontend/src/data/site.js` 한 곳에서 관리합니다.
 
 ## 스크롤 등장 효과 (AOS)

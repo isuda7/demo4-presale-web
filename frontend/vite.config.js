@@ -43,10 +43,16 @@ function resolveSiteUrl(env) {
   return 'http://localhost:4173';
 }
 
+/** 검색엔진 소유 확인 코드 — Vercel 환경변수에 넣으면 메인 페이지에 메타태그로 들어간다 */
+const seoOptions = (env) => ({
+  siteUrl: resolveSiteUrl(env),
+  verification: { google: env.GOOGLE_SITE_VERIFICATION, naver: env.NAVER_SITE_VERIFICATION, bing: env.BING_SITE_VERIFICATION },
+});
+
 export default defineConfig(({ mode }) => ({
   root,
   publicDir: resolve(root, 'public'),
-  plugins: [htmlIncludes(), seoPlugin({ root, siteUrl: resolveSiteUrl({ ...loadEnv(mode, resolve(root, '..'), ''), ...process.env }) })],
+  plugins: [htmlIncludes(), seoPlugin({ root, ...seoOptions({ ...loadEnv(mode, resolve(root, '..'), ''), ...process.env }) })],
   server: { port: 5173, proxy: apiProxy },
   preview: { port: 4173, proxy: apiProxy },
   build: {

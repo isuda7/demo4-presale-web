@@ -11,7 +11,7 @@ import { esc, typeLabel, notesListHtml, summaryTableHtml, unitTabsHtml, unitPane
 
 const NOINDEX_PAGES = new Set(['admin', '404']);
 
-export function seoPlugin({ root, siteUrl }) {
+export function seoPlugin({ root, siteUrl, verification = {} }) {
   const notes = JSON.parse(readFileSync(resolve(root, 'src/data/notes.json'), 'utf8'));
   const abs = (p) => `${siteUrl}${p.startsWith('/') ? p : `/${p}`}`;
   const pageOf = (name) => PAGES.find((p) => p.name === name);
@@ -151,6 +151,14 @@ export function seoPlugin({ root, siteUrl }) {
     const url = abs(page?.path ?? `/${name}.html`);
     const image = abs(page?.image ?? SITE.defaultImage);
     tags.push(`<link rel="canonical" href="${url}" />`);
+    // 검색엔진 소유 확인 메타태그 (환경변수로 받은 값, 메인 페이지에만)
+    if (name === 'index') {
+      const meta = { google: 'google-site-verification', naver: 'naver-site-verification', bing: 'msvalidate.01' };
+      for (const [k, metaName] of Object.entries(meta)) {
+        const v = String(verification[k] ?? '').trim();
+        if (/^[\w\-.=+/]{8,200}$/.test(v)) tags.push(`<meta name="${metaName}" content="${v}" />`);
+      }
+    }
     tags.push('<meta property="og:type" content="website" />');
     tags.push('<meta property="og:locale" content="ko_KR" />');
     tags.push(`<meta property="og:url" content="${url}" />`);
