@@ -14,6 +14,7 @@ const app = new Hono().basePath('/api');
 app.use('*', secureHeaders({ crossOriginResourcePolicy: 'same-origin' }));
 app.use('*', async (c, next) => {
   c.header('Cache-Control', 'no-store');
+  c.header('X-Robots-Tag', 'noindex, nofollow'); // API 응답은 검색에 노출하지 않는다
   await ensureSchema();
   await next();
 });

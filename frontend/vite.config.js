@@ -1,7 +1,8 @@
-import { defineConfig } from 'vite';
+import { defineConfig, loadEnv } from 'vite';
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { seoPlugin } from './build/seo-plugin.js';
 
 const root = dirname(fileURLToPath(import.meta.url));
 const partialsDir = resolve(root, 'partials');
@@ -34,10 +35,18 @@ function htmlIncludes() {
 
 const apiProxy = { '/api': { target: `http://localhost:${process.env.API_PORT || 8787}`, changeOrigin: false } };
 
-export default defineConfig({
+/** 운영 주소: SITE_URL → Vercel 운영 도메인 → 로컬 미리보기 순 (사이트맵·canonical·llms.txt 기준) */
+function resolveSiteUrl(env) {
+  const url = env.SITE_URL || (env.VERCEL_PROJECT_PRODUCTION_URL ? `https://${env.VERCEL_PROJECT_PRODUCTION_URL}` : '');
+  if (url) return url.replace(/\/+$/, '');
+  console.warn('[seo] SITE_URL이 없어 http://localhost:4173 을 기준 주소로 씁니다. 운영 배포 전 SITE_URL을 설정하세요.');
+  return 'http://localhost:4173';
+}
+
+export default defineConfig(({ mode }) => ({
   root,
   publicDir: resolve(root, 'public'),
-  plugins: [htmlIncludes()],
+  plugins: [htmlIncludes(), seoPlugin({ root, siteUrl: resolveSiteUrl({ ...loadEnv(mode, resolve(root, '..'), ''), ...process.env }) })],
   server: { port: 5173, proxy: apiProxy },
   preview: { port: 4173, proxy: apiProxy },
   build: {
@@ -45,4 +54,4 @@ export default defineConfig({
     emptyOutDir: true,
     rollupOptions: { input: pages },
   },
-});
+}));

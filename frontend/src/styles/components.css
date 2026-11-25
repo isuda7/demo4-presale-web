@@ -254,3 +254,6 @@
 
 
 body[data-page='apply'] .float-cta { display: none; }
+
+.site-footer__links { display: flex; flex-wrap: wrap; gap: 6px 18px; }
+.site-footer__links a:hover { color: #fff; }
