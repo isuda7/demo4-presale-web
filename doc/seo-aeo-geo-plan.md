@@ -73,3 +73,11 @@
 ## 다음 확인 (사람)
 - 배포 후 [구글 리치 결과 테스트](https://search.google.com/test/rich-results)로 FAQ·단지 구조화 데이터 인식 여부를 확인한다.
 - 서치콘솔·서치어드바이저에 `/sitemap.xml`을 제출한다.
+
+## 검색 노출 스위치 (데모 운영 중)
+- 데모 기간에는 검색에 노출하지 않는다. Vercel 환경변수 `SEARCH_INDEXING=off` → 재배포.
+  - 모든 페이지 `noindex, nofollow`, AI 크롤러(GPTBot·ClaudeBot·PerplexityBot 등) robots 차단, `sitemap.xml`·`llms.txt` 미생성
+  - 검색엔진 크롤러는 robots에서 막지 않는다. 막으면 noindex를 읽지 못해 주소만 검색에 남을 수 있다.
+- 구글 서치콘솔: 소유 확인 파일(`frontend/public/google3c43749f423008fc.html`)은 유지하고, 사이트맵은 제출하지 않는다. 사이트 전체 '일시적 URL 삭제' 요청은 noindex가 반영될 때까지의 임시 조치다.
+- 네이버·빙 등록은 공개 시점까지 보류한다.
+- 정식 공개 시: `SEARCH_INDEXING`을 지우거나 `on` → 재배포 → 서치콘솔 삭제 요청 취소 → 사이트맵 제출 → 네이버·빙 등록.

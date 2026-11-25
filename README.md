@@ -112,6 +112,7 @@
 | `API_PORT` | 선택 | 로컬 API 포트 (기본 8787) |
 | `SITE_URL` | 선택 | 운영 사이트 주소 (사이트맵·canonical·llms.txt 기준). 비우면 Vercel 운영 주소를 씀 |
 | `GOOGLE_SITE_VERIFICATION` / `NAVER_SITE_VERIFICATION` / `BING_SITE_VERIFICATION` | 선택 | 검색엔진 소유 확인 코드(HTML 태그의 content 값). 메인 페이지에 메타태그로 들어감 |
+| `SEARCH_INDEXING` | 선택 | 검색 노출 스위치. `off`면 모든 페이지 noindex, AI 크롤러 차단, 사이트맵·llms.txt 미생성 (기본 `on`) |
 
 ## 배포 (Turso + Vercel)
 
@@ -170,6 +171,8 @@
 - 페이지별 canonical·OG·트위터 카드·구조화 데이터(WebSite, ApartmentComplex, 타입별 Apartment, FAQPage, BreadcrumbList)가 자동으로 들어갑니다.
 - 기준 주소는 `SITE_URL` → Vercel 운영 도메인 → `http://localhost:4173` 순서로 정해집니다. vercel.app 주소를 쓰는 동안에는 `SITE_URL`이 없어도 됩니다.
 - 사실 정보와 FAQ는 `frontend/src/data/site.js` 한 곳에서 관리합니다.
+- 데모처럼 검색에 노출하지 않으려면 Vercel 환경변수 `SEARCH_INDEXING=off`를 넣고 재배포합니다. 공개할 때는 이 값을 지우거나 `on`으로 바꿉니다.
+- 검색엔진 확인 파일처럼 사이트 루트에 그대로 있어야 하는 파일은 `frontend/public/`에 둡니다(빌드 시 그대로 루트로 복사됨).
 
 ## 스크롤 등장 효과 (AOS)
 

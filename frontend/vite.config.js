@@ -46,6 +46,8 @@ function resolveSiteUrl(env) {
 /** 검색엔진 소유 확인 코드 — Vercel 환경변수에 넣으면 메인 페이지에 메타태그로 들어간다 */
 const seoOptions = (env) => ({
   siteUrl: resolveSiteUrl(env),
+  // 검색 노출 스위치: SEARCH_INDEXING=off 이면 모든 페이지 noindex + AI 크롤러 차단 + 사이트맵·llms.txt 미생성
+  indexing: String(env.SEARCH_INDEXING ?? 'on').toLowerCase() !== 'off',
   verification: { google: env.GOOGLE_SITE_VERIFICATION, naver: env.NAVER_SITE_VERIFICATION, bing: env.BING_SITE_VERIFICATION },
 });
 

@@ -11,7 +11,7 @@ import { esc, typeLabel, notesListHtml, summaryTableHtml, unitTabsHtml, unitPane
 
 const NOINDEX_PAGES = new Set(['admin', '404']);
 
-export function seoPlugin({ root, siteUrl, verification = {} }) {
+export function seoPlugin({ root, siteUrl, verification = {}, indexing = true }) {
   const notes = JSON.parse(readFileSync(resolve(root, 'src/data/notes.json'), 'utf8'));
   const abs = (p) => `${siteUrl}${p.startsWith('/') ? p : `/${p}`}`;
   const pageOf = (name) => PAGES.find((p) => p.name === name);
@@ -144,6 +144,9 @@ export function seoPlugin({ root, siteUrl, verification = {} }) {
     const title = html.match(/<title>(.*?)<\/title>/)?.[1] ?? SITE.name;
     const desc = html.match(/<meta name="description" content="(.*?)"/)?.[1] ?? SITE.summary;
     const tags = [];
+    if (!indexing && !NOINDEX_PAGES.has(name) && !/name="robots"/.test(html)) {
+      tags.push('<meta name="robots" content="noindex, nofollow" />'); // 검색 노출 끔(SEARCH_INDEXING=off)
+    }
     if (NOINDEX_PAGES.has(name)) {
       if (!/name="robots"/.test(html)) tags.push('<meta name="robots" content="noindex, nofollow" />');
       return tags;
@@ -183,6 +186,20 @@ export function seoPlugin({ root, siteUrl, verification = {} }) {
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 ${PAGES.map((p) => `  <url><loc>${abs(p.path)}</loc><lastmod>${today()}</lastmod><priority>${p.priority ?? '0.7'}</priority></url>`).join('\n')}
 </urlset>
+`;
+  }
+
+  function robotsTxtClosed() {
+    // 검색 노출 끔: 검색엔진은 noindex를 읽을 수 있게 접근만 허용하고, AI 크롤러와 사이트맵은 막는다
+    const aiBots = ['GPTBot', 'OAI-SearchBot', 'ChatGPT-User', 'ClaudeBot', 'Claude-User', 'Claude-SearchBot', 'PerplexityBot', 'Perplexity-User', 'Google-Extended', 'Applebot-Extended', 'CCBot'];
+    return `# ${SITE.name} — 검색 노출 꺼짐 (모든 페이지 noindex)
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /api/
+
+${aiBots.map((b) => `User-agent: ${b}`).join('\n')}
+Disallow: /
 `;
   }
 
@@ -229,11 +246,14 @@ Sitemap: ${abs('/sitemap.xml')}
     return lines.join('\n');
   }
 
-  const files = {
-    '/sitemap.xml': ['application/xml; charset=utf-8', sitemapXml],
-    '/robots.txt': ['text/plain; charset=utf-8', robotsTxt],
-    '/llms.txt': ['text/plain; charset=utf-8', llmsTxt],
-  };
+  // 검색 노출을 끄면 사이트맵·llms.txt는 만들지 않고 robots.txt만 차단용으로 만든다
+  const files = indexing
+    ? {
+        '/sitemap.xml': ['application/xml; charset=utf-8', sitemapXml],
+        '/robots.txt': ['text/plain; charset=utf-8', robotsTxt],
+        '/llms.txt': ['text/plain; charset=utf-8', llmsTxt],
+      }
+    : { '/robots.txt': ['text/plain; charset=utf-8', robotsTxtClosed] };
 
   return {
     name: 'presale-seo',
